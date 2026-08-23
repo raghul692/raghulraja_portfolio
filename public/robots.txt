@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://raghulraja.dev/sitemap.xml
+Host: https://raghulraja.dev

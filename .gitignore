@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Production build outputs
+dist/
+build/
+
+# Environment variables & secrets (CRITICAL)
+.env
+.env.local
+.env.*.local
+backend/.env
+
+# Python / FastAPI
+__pycache__/
+*.py[cod]
+*$py.class
+backend/__pycache__/
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# IDE & OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log

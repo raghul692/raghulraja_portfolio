@@ -1,0 +1,12 @@
+fastapi==0.115.6
+uvicorn==0.34.0
+mysql-connector-python==9.1.0
+python-dotenv==1.0.1
+pydantic==2.10.4
+psycopg2-binary
+pgvector
+python-docx
+pypdf
+google-generativeai
+python-multipart
+slowapi==0.1.9

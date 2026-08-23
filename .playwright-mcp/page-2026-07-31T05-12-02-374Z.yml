@@ -1,0 +1,471 @@
+- generic [ref=e3]:
+  - navigation [ref=e9]:
+    - generic [ref=e10]:
+      - link [ref=e11] [cursor=pointer]:
+        - /url: "#"
+        - img "Logo" [ref=e12]
+      - generic [ref=e13]:
+        - link "About" [ref=e14] [cursor=pointer]:
+          - /url: "#about"
+        - link "Projects" [ref=e15] [cursor=pointer]:
+          - /url: "#projects"
+        - link "Experience" [ref=e16] [cursor=pointer]:
+          - /url: "#experience"
+        - link "Certificates" [ref=e17] [cursor=pointer]:
+          - /url: "#certificates"
+        - link "Contact" [ref=e18] [cursor=pointer]:
+          - /url: "#contact"
+      - button "Toggle theme" [ref=e20] [cursor=pointer]
+  - main [ref=e27]:
+    - generic [ref=e28]:
+      - generic [ref=e35]:
+        - generic [ref=e36]:
+          - generic [ref=e37]: Available for Internship
+          - heading "Hi, I'm Raghul Raja" [level=1] [ref=e42]
+          - paragraph [ref=e44]: Full Stack Developer
+          - paragraph [ref=e45]: I build scalable full-stack web applications, AI-powered software, and modern digital experiences using React, Node.js, Python, and Cloud technologies. Focused on clean architecture, performance, security, and exceptional user experience.
+          - generic [ref=e46]:
+            - generic [ref=e47]: Villupuram, Tamil Nadu
+            - link "Email" [ref=e51] [cursor=pointer]:
+              - /url: mailto:raghulraja2006@gmail.com
+            - link "Phone" [ref=e55] [cursor=pointer]:
+              - /url: tel:+918946092718
+            - generic [ref=e58]: Remote Friendly
+            - generic [ref=e62]: IST Timezone
+          - generic [ref=e65]:
+            - link "View Projects" [ref=e66] [cursor=pointer]:
+              - /url: "#projects"
+            - button "Download Resume" [ref=e74] [cursor=pointer]
+            - link "Hire Me" [ref=e78] [cursor=pointer]:
+              - /url: "#contact"
+          - generic [ref=e81]:
+            - link "GitHub" [ref=e82] [cursor=pointer]:
+              - /url: https://github.com/raghul692
+            - link "LinkedIn" [ref=e86] [cursor=pointer]:
+              - /url: https://www.linkedin.com/in/raghulraja2006/
+            - link "Instagram" [ref=e91] [cursor=pointer]:
+              - /url: https://www.instagram.com/dora_emon4123/
+            - link "Email" [ref=e95] [cursor=pointer]:
+              - /url: mailto:raghulraja2006@gmail.com
+          - generic [ref=e99]:
+            - generic [ref=e100]:
+              - generic [ref=e101]: 0+
+              - paragraph [ref=e102]: Projects
+            - generic [ref=e103]:
+              - generic [ref=e104]: 0+
+              - paragraph [ref=e105]: Technologies
+            - generic [ref=e106]:
+              - generic [ref=e107]: 0+
+              - paragraph [ref=e108]: Years Learning
+            - generic [ref=e109]:
+              - generic [ref=e110]: 0%
+              - paragraph [ref=e111]: Passion
+          - generic [ref=e112]:
+            - generic [ref=e113]: Full Stack
+            - generic [ref=e117]: AI/ML
+            - generic [ref=e121]: UI/UX
+            - generic [ref=e125]: Problem Solver
+            - generic [ref=e129]: Fast Learner
+            - generic [ref=e133]: Team Player
+        - img "Raghul Raja" [ref=e143]
+      - generic [ref=e144]: Scroll to Explore
+    - generic [ref=e149]:
+      - generic [ref=e150]:
+        - heading "About Me" [level=2] [ref=e151]
+        - paragraph [ref=e152]: Full Stack Developer specializing in React, TypeScript, Node.js, and AI/ML. Experienced in building scalable web applications, designing intuitive user experiences, and developing intelligent systems with Python. Passionate about solving complex problems and shipping high-quality software that bridges engineering, design, and artificial intelligence.
+      - generic [ref=e153]:
+        - generic [ref=e154]:
+          - generic [ref=e159]: 6+
+          - paragraph [ref=e160]: Projects
+        - generic [ref=e161]:
+          - generic [ref=e164]: 8+
+          - paragraph [ref=e165]: Certifications
+        - generic [ref=e166]:
+          - generic [ref=e170]: "1"
+          - paragraph [ref=e171]: Internships
+        - generic [ref=e172]:
+          - generic [ref=e175]: 100%
+          - paragraph [ref=e176]: Passion
+      - generic [ref=e177]:
+        - generic [ref=e178]:
+          - heading "Education" [level=3] [ref=e179]
+          - generic [ref=e184]:
+            - heading "B.E. Computer Science and Engineering" [level=4] [ref=e185]
+            - paragraph [ref=e186]: SKP Engineering College, Tiruvannamalai | Tiruvannamalai, Tamil Nadu
+            - generic [ref=e187]:
+              - generic [ref=e188]: 2023 - 2027
+              - generic [ref=e189]: "CGPA: 8.2"
+          - heading "Soft Skills" [level=3] [ref=e190]
+          - generic [ref=e193]:
+            - generic [ref=e194]: Problem Solving
+            - generic [ref=e195]: Communication
+            - generic [ref=e196]: Team Collaboration
+            - generic [ref=e197]: Continuous Learning
+            - generic [ref=e198]: Time Management
+            - generic [ref=e199]: Quick Learning
+          - heading "Languages" [level=3] [ref=e200]
+          - generic [ref=e204]:
+            - generic [ref=e205]: English
+            - generic [ref=e206]: Tamil
+        - generic [ref=e207]:
+          - heading "Tech Stack" [level=3] [ref=e208]
+          - generic [ref=e209]:
+            - button "All" [ref=e210] [cursor=pointer]
+            - button "Frontend" [ref=e211] [cursor=pointer]
+            - button "Backend" [ref=e212] [cursor=pointer]
+            - button "AI / ML" [ref=e213] [cursor=pointer]
+            - button "Database" [ref=e214] [cursor=pointer]
+            - button "Design" [ref=e215] [cursor=pointer]
+            - button "Tools" [ref=e216] [cursor=pointer]
+          - generic [ref=e217]:
+            - generic [ref=e218]:
+              - generic [ref=e224]: HTML5
+              - generic [ref=e225]: Frontend
+            - generic [ref=e226]:
+              - generic [ref=e232]: CSS3
+              - generic [ref=e233]: Frontend
+            - generic [ref=e234]:
+              - generic [ref=e240]: JavaScript
+              - generic [ref=e241]: Frontend
+            - generic [ref=e242]:
+              - generic [ref=e248]: JSON
+              - generic [ref=e249]: Frontend
+            - generic [ref=e250]:
+              - generic [ref=e256]: React
+              - generic [ref=e257]: Frontend
+            - generic [ref=e258]:
+              - generic [ref=e264]: TypeScript
+              - generic [ref=e265]: Frontend
+            - generic [ref=e266]:
+              - generic [ref=e272]: Tailwind CSS
+              - generic [ref=e273]: Frontend
+            - generic [ref=e274]:
+              - generic [ref=e278]: Node.js
+              - generic [ref=e279]: Backend
+            - generic [ref=e280]:
+              - generic [ref=e284]: Express
+              - generic [ref=e285]: Backend
+            - generic [ref=e286]:
+              - generic [ref=e290]: REST APIs
+              - generic [ref=e291]: Backend
+            - generic [ref=e292]:
+              - generic [ref=e304]: Python
+              - generic [ref=e305]: AI / ML
+            - generic [ref=e306]:
+              - generic [ref=e312]: MySQL
+              - generic [ref=e313]: Database
+            - generic [ref=e314]:
+              - generic [ref=e320]: MongoDB
+              - generic [ref=e321]: Database
+            - generic [ref=e322]:
+              - generic [ref=e330]: Figma
+              - generic [ref=e331]: Design
+            - generic [ref=e332]:
+              - generic [ref=e336]: Git
+              - generic [ref=e337]: Tools
+            - generic [ref=e338]:
+              - generic [ref=e342]: GitHub
+              - generic [ref=e343]: Tools
+            - generic [ref=e344]:
+              - generic [ref=e348]: VS Code
+              - generic [ref=e349]: Tools
+    - generic [ref=e351]:
+      - generic [ref=e352]:
+        - heading "Projects" [level=2] [ref=e353]
+        - paragraph [ref=e354]: A selection of projects that showcase my skills across full-stack development, AI/ML, frontend engineering, and UI/UX design.
+      - generic [ref=e355]:
+        - button "All" [ref=e356] [cursor=pointer]
+        - button "Full Stack" [ref=e357] [cursor=pointer]
+        - button "AI/ML" [ref=e358] [cursor=pointer]
+        - button "Frontend" [ref=e359] [cursor=pointer]
+        - button "UI/UX" [ref=e360] [cursor=pointer]
+      - generic [ref=e361]:
+        - generic [ref=e362] [cursor=pointer]:
+          - generic [ref=e363]: Full Stack
+          - heading "CareerConnectPro" [level=3] [ref=e369]
+          - paragraph [ref=e370]: Full-stack job portal with secure authentication, job management, and application tracking.
+          - generic [ref=e371]:
+            - generic [ref=e372]: React
+            - generic [ref=e373]: Node.js
+            - generic [ref=e374]: Express.js
+            - generic [ref=e375]: MySQL
+            - generic [ref=e376]: "+2"
+          - generic [ref=e377]:
+            - generic [ref=e378]: Implemented secure JWT authentication with role-based access control
+            - generic [ref=e382]: Built responsive dashboard with real-time application tracking
+          - generic [ref=e386]:
+            - link "GitHub" [ref=e387]:
+              - /url: https://github.com/raghulraja/careerconnectpro
+            - link "Live Demo" [ref=e391]:
+              - /url: https://careerconnectpro.vercel.app
+            - generic [ref=e396]: View Details
+        - generic [ref=e397] [cursor=pointer]:
+          - generic [ref=e398]: AI/ML
+          - heading "Multi Disease Prediction System" [level=3] [ref=e404]
+          - paragraph [ref=e405]: ML-based system predicting diabetes, heart, kidney, and liver disease risks from health parameters.
+          - generic [ref=e406]:
+            - generic [ref=e407]: Python
+            - generic [ref=e408]: Machine Learning
+            - generic [ref=e409]: Pandas
+            - generic [ref=e410]: NumPy
+            - generic [ref=e411]: "+2"
+          - generic [ref=e412]:
+            - generic [ref=e413]: Engineered prediction models for 4 diseases using Scikit-learn
+            - generic [ref=e417]: Performed comprehensive data preprocessing and feature engineering
+          - generic [ref=e421]:
+            - link "GitHub" [ref=e422]:
+              - /url: https://github.com/raghulraja/multi-disease-prediction
+            - generic [ref=e426]: View Details
+        - generic [ref=e427] [cursor=pointer]:
+          - generic [ref=e428]: Frontend
+          - heading "Password Generator Pro" [level=3] [ref=e434]
+          - paragraph [ref=e435]: Secure password generation tool with customizable length and character complexity options.
+          - generic [ref=e436]:
+            - generic [ref=e437]: React
+            - generic [ref=e438]: TypeScript
+            - generic [ref=e439]: Tailwind CSS
+            - generic [ref=e440]: Framer Motion
+          - generic [ref=e441]:
+            - generic [ref=e442]: Built with TypeScript for type-safe password generation logic
+            - generic [ref=e446]: Implemented real-time password strength indicator algorithm
+          - generic [ref=e450]:
+            - link "GitHub" [ref=e451]:
+              - /url: https://github.com/raghulraja/password-generator-pro
+            - link "Live Demo" [ref=e455]:
+              - /url: https://password-generator-pro.vercel.app
+            - generic [ref=e460]: View Details
+        - generic [ref=e461] [cursor=pointer]:
+          - generic [ref=e462]: Frontend
+          - heading "Blogify" [level=3] [ref=e468]
+          - paragraph [ref=e469]: Responsive blogging platform enabling users to create, edit, publish, and manage posts.
+          - generic [ref=e470]:
+            - generic [ref=e471]: HTML5
+            - generic [ref=e472]: CSS3
+            - generic [ref=e473]: JavaScript
+            - generic [ref=e474]: LocalStorage
+          - generic [ref=e475]:
+            - generic [ref=e476]: Implemented CRUD operations for blog post management
+            - generic [ref=e480]: Built responsive masonry grid layout for post display
+          - generic [ref=e484]:
+            - link "GitHub" [ref=e485]:
+              - /url: https://github.com/raghulraja/blogify
+            - link "Live Demo" [ref=e489]:
+              - /url: https://blogify-demo.vercel.app
+            - generic [ref=e494]: View Details
+        - generic [ref=e495] [cursor=pointer]:
+          - generic [ref=e496]: UI/UX
+          - heading "Home Made Food Delivery App" [level=3] [ref=e504]
+          - paragraph [ref=e505]: UI/UX design for a home-made food delivery application connecting home cooks with customers.
+          - generic [ref=e506]:
+            - generic [ref=e507]: Figma
+            - generic [ref=e508]: UI/UX Design
+            - generic [ref=e509]: Prototyping
+            - generic [ref=e510]: User Research
+          - generic [ref=e511]:
+            - generic [ref=e512]: Designed end-to-end mobile app flow from onboarding to checkout
+            - generic [ref=e516]: Created component library with consistent design tokens
+          - generic [ref=e520]: View Details
+        - generic [ref=e522] [cursor=pointer]:
+          - generic [ref=e523]: UI/UX
+          - heading "Musicfy" [level=3] [ref=e530]
+          - paragraph [ref=e531]: Music streaming app UI/UX design with playlist management and discovery features.
+          - generic [ref=e532]:
+            - generic [ref=e533]: Figma
+            - generic [ref=e534]: UI/UX Design
+            - generic [ref=e535]: Design Systems
+            - generic [ref=e536]: Motion Design
+          - generic [ref=e537]:
+            - generic [ref=e538]: Designed immersive dark-themed music player interface
+            - generic [ref=e542]: Created custom icon set and illustration style
+          - generic [ref=e546]: View Details
+    - generic [ref=e550]:
+      - generic [ref=e551]:
+        - heading "Experience" [level=2] [ref=e552]
+        - paragraph [ref=e553]: Professional journey and educational background.
+      - generic [ref=e558]:
+        - generic [ref=e559]:
+          - generic [ref=e560]: "2025"
+          - generic [ref=e564]: Internship Program
+        - heading "AI with Data Science Intern" [level=3] [ref=e565]
+        - list [ref=e566]:
+          - listitem [ref=e567]: Developed machine learning-based prediction models for multi-disease risk assessment
+          - listitem [ref=e569]: Performed data preprocessing and feature preparation on healthcare datasets for model training
+          - listitem [ref=e571]: Built a prediction interface enabling users to input health parameters and receive AI-assisted results
+          - listitem [ref=e573]: Collaborated in end-to-end project development, applying Python for AI-based solution design
+    - generic [ref=e577]:
+      - generic [ref=e578]:
+        - heading "Certificates" [level=2] [ref=e579]
+        - paragraph [ref=e580]: Professional certifications and continuous learning achievements.
+      - generic [ref=e581]:
+        - generic [ref=e582]:
+          - button "All" [ref=e583] [cursor=pointer]
+          - button "AI" [ref=e584] [cursor=pointer]
+          - button "Cloud" [ref=e585] [cursor=pointer]
+          - button "Security" [ref=e586] [cursor=pointer]
+          - button "Design" [ref=e587] [cursor=pointer]
+          - button "Data" [ref=e588] [cursor=pointer]
+          - button "Other" [ref=e589] [cursor=pointer]
+        - textbox "Search by title, issuer, or skills..." [ref=e591]
+      - generic [ref=e592]:
+        - generic [ref=e593]:
+          - generic [ref=e594]: Oracle
+          - heading "Oracle Cloud Infrastructure 2025 Certified AI Foundations Associate" [level=3] [ref=e599]
+          - generic [ref=e600]: 2025-10-14
+          - generic [ref=e603]:
+            - generic [ref=e604]: Oracle Cloud
+            - generic [ref=e605]: AI Foundations
+            - generic [ref=e606]: Cloud Computing
+          - button "View Certificate" [ref=e607] [cursor=pointer]
+        - generic [ref=e612]:
+          - generic [ref=e613]: EBPL
+          - heading "EBPL - Internship on Generative AI" [level=3] [ref=e626]
+          - generic [ref=e627]: 2025-10-23
+          - generic [ref=e630]:
+            - generic [ref=e631]: Generative AI
+            - generic [ref=e632]: Python
+            - generic [ref=e633]: AI Development
+          - button "View Certificate" [ref=e634] [cursor=pointer]
+        - generic [ref=e639]:
+          - generic [ref=e640]: GUVI
+          - heading "UI/UX Design Certificate" [level=3] [ref=e649]
+          - generic [ref=e650]: "2025"
+          - generic [ref=e653]:
+            - generic [ref=e654]: UI Design
+            - generic [ref=e655]: UX Research
+            - generic [ref=e656]: Figma
+            - generic [ref=e657]: Prototyping
+          - button "View Certificate" [ref=e658] [cursor=pointer]
+        - generic [ref=e663]:
+          - generic [ref=e664]: GUVI
+          - heading "Data Science Fundamentals" [level=3] [ref=e668]
+          - generic [ref=e669]: "2025"
+          - generic [ref=e672]:
+            - generic [ref=e673]: Data Science
+            - generic [ref=e674]: Python
+            - generic [ref=e675]: Statistics
+            - generic [ref=e676]: Data Analysis
+          - button "View Certificate" [ref=e677] [cursor=pointer]
+        - generic [ref=e682]:
+          - generic [ref=e683]: CyberWolf
+          - heading "App Penetration Testing" [level=3] [ref=e688]
+          - generic [ref=e689]: 2025-08-10
+          - generic [ref=e692]:
+            - generic [ref=e693]: Penetration Testing
+            - generic [ref=e694]: Ethical Hacking
+            - generic [ref=e695]: Cybersecurity
+            - generic [ref=e696]: Mobile Security
+          - button "View Certificate" [ref=e697] [cursor=pointer]
+        - generic [ref=e702]:
+          - generic [ref=e703]: AWS
+          - heading "AWS Cloud Club Certification" [level=3] [ref=e708]
+          - generic [ref=e709]: "2025"
+          - generic [ref=e712]:
+            - generic [ref=e713]: AWS
+            - generic [ref=e714]: Cloud Computing
+            - generic [ref=e715]: Cloud Architecture
+          - button "View Certificate" [ref=e716] [cursor=pointer]
+        - generic [ref=e721]:
+          - generic [ref=e722]: SKP Engineering College
+          - heading "Management Conclave" [level=3] [ref=e728]
+          - generic [ref=e729]: "2025"
+          - generic [ref=e732]:
+            - generic [ref=e733]: Management
+            - generic [ref=e734]: Leadership
+            - generic [ref=e735]: Event Management
+          - button "View Certificate" [ref=e736] [cursor=pointer]
+        - generic [ref=e741]:
+          - generic [ref=e742]: SKP Engineering College
+          - heading "Workshop" [level=3] [ref=e748]
+          - generic [ref=e749]: "2025"
+          - generic [ref=e752]:
+            - generic [ref=e753]: Workshop
+            - generic [ref=e754]: Event
+          - button "View Certificate" [ref=e755] [cursor=pointer]
+        - generic [ref=e760]:
+          - generic [ref=e761]: EBPL
+          - heading "EBPL Certificate in NM" [level=3] [ref=e767]
+          - generic [ref=e768]: "2025"
+          - generic [ref=e771]:
+            - generic [ref=e772]: Networking
+            - generic [ref=e773]: EBPL
+          - button "View Certificate" [ref=e774] [cursor=pointer]
+        - generic [ref=e779]:
+          - generic [ref=e780]: SKP Engineering College
+          - heading "Appreciation Certificate" [level=3] [ref=e786]
+          - generic [ref=e787]: "2025"
+          - generic [ref=e790]:
+            - generic [ref=e791]: Appreciation
+            - generic [ref=e792]: Achievement
+          - button "View Certificate" [ref=e793] [cursor=pointer]
+    - generic [ref=e800]:
+      - generic [ref=e801]:
+        - generic [ref=e802]: Let's Connect
+        - heading "Get In Touch" [level=2] [ref=e806]
+        - paragraph [ref=e807]: Have a project in mind or want to collaborate? I would love to hear from you.
+      - generic [ref=e808]:
+        - generic [ref=e810]:
+          - generic [ref=e811]:
+            - generic [ref=e812]:
+              - generic [ref=e813]: Name *
+              - textbox "Name *" [ref=e818]:
+                - /placeholder: Your full name
+            - generic [ref=e819]:
+              - generic [ref=e820]: Email *
+              - textbox "Email *" [ref=e825]:
+                - /placeholder: you@example.com
+            - generic [ref=e826]:
+              - generic [ref=e827]: Subject (optional)
+              - textbox "Subject (optional)" [ref=e832]:
+                - /placeholder: What's this about?
+            - generic [ref=e833]:
+              - generic [ref=e834]: Message *
+              - textbox "Message *" [ref=e838]:
+                - /placeholder: Tell me about your project or idea...
+              - paragraph [ref=e839]: 0/20 characters minimum
+          - button "Send Message" [ref=e840] [cursor=pointer]
+        - generic [ref=e844]:
+          - generic [ref=e845]:
+            - heading "Contact Information" [level=3] [ref=e846]
+            - generic [ref=e847]:
+              - link "Email raghulraja2006@gmail.com" [ref=e848] [cursor=pointer]:
+                - /url: mailto:raghulraja2006@gmail.com
+                - generic [ref=e853]:
+                  - generic [ref=e854]: Email
+                  - text: raghulraja2006@gmail.com
+              - link "Phone +91 8946092718" [ref=e855] [cursor=pointer]:
+                - /url: tel:+918946092718
+                - generic [ref=e859]:
+                  - generic [ref=e860]: Phone
+                  - text: +91 8946092718
+              - link "Location Villupuram, Tamil Nadu, India" [ref=e861] [cursor=pointer]:
+                - /url: "#"
+                - generic [ref=e866]:
+                  - generic [ref=e867]: Location
+                  - text: Villupuram, Tamil Nadu, India
+          - generic [ref=e868]:
+            - heading "Connect" [level=3] [ref=e869]
+            - generic [ref=e870]:
+              - link "GitHub" [ref=e871] [cursor=pointer]:
+                - /url: https://github.com/raghul692
+              - link "LinkedIn" [ref=e876] [cursor=pointer]:
+                - /url: https://www.linkedin.com/in/raghulraja2006/
+          - generic [ref=e882]:
+            - heading "Response Time" [level=3] [ref=e887]
+            - paragraph [ref=e888]: I typically respond within 24 hours. For urgent inquiries, feel free to reach out directly via email or phone.
+  - contentinfo [ref=e889]:
+    - generic [ref=e890]:
+      - generic [ref=e891]:
+        - img "Logo" [ref=e893]
+        - generic [ref=e894]:
+          - link "GitHub" [ref=e895] [cursor=pointer]:
+            - /url: https://github.com/raghul692
+          - link "LinkedIn" [ref=e899] [cursor=pointer]:
+            - /url: https://www.linkedin.com/in/raghulraja2006/
+          - link "Instagram" [ref=e904] [cursor=pointer]:
+            - /url: https://www.instagram.com/dora_emon4123/
+          - link "Email" [ref=e908] [cursor=pointer]:
+            - /url: mailto:raghulraja2006@gmail.com
+        - paragraph [ref=e912]: Built with precision. Designed with purpose.
+      - generic [ref=e913]:
+        - paragraph [ref=e914]: 2026 Raghul Raja . All rights reserved.
+        - button "Back to top" [ref=e915] [cursor=pointer]
