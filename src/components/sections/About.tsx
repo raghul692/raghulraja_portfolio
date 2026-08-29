@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { resume, techStack, certificates } from '@/data/resume'
+import type { TechItem } from '@/data/resume'
 import { cn } from '@/utils/cn'
 import { useState } from 'react'
 import { GraduationCap, Code2, Brain, Database, Palette, Wrench, BookOpen, Globe, Zap, Heart } from 'lucide-react'
@@ -66,7 +67,7 @@ export default function About() {
   const categories = Object.keys(categoryConfig)
 
   const filteredTech = activeCategory
-    ? techStack.filter(t => t.category === activeCategory)
+    ? techStack.filter((t: TechItem) => t.category === activeCategory)
     : techStack
 
   return (
@@ -226,7 +227,7 @@ export default function About() {
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {filteredTech.map((tech, i) => {
+              {filteredTech.map((tech: TechItem, i: number) => {
                 const config = categoryConfig[tech.category]
                 const brand = techIconMap[tech.name] || { icon: config.icon, color: 'text-primary', bg: config.color }
                 const Icon = brand.icon

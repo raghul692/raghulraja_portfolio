@@ -16,6 +16,7 @@ import { ScrollProgress } from '@/components/animations/ScrollProgress'
 import { CustomCursor } from '@/components/animations/CustomCursor'
 import Education from '@/components/sections/Education'
 import PortfolioAIHub from '@/components/ai/PortfolioAIHub'
+import { ToastContainer } from '@/components/ui/ToastNotification'
 
 export default function App() {
   const [commandOpen, setCommandOpen] = useState(false)
@@ -36,6 +37,7 @@ export default function App() {
     <div className="relative min-h-screen bg-surface-dark text-foreground overflow-x-hidden">
       <CustomCursor />
       <ScrollProgress />
+      <ToastContainer />
       <Navbar />
       <main>
         <Hero />
@@ -67,10 +69,12 @@ export default function App() {
 
       <AnimatePresence>
         {commandOpen && (
-          <CommandPalette onClose={() => setCommandOpen(false)} />
+          <CommandPalette
+            onClose={() => setCommandOpen(false)}
+            onOpenAiHub={() => setAiHubOpen(true)}
+          />
         )}
       </AnimatePresence>
     </div>
   )
 }
-

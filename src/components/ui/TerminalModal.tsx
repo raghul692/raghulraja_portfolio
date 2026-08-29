@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Terminal, X, CornerDownLeft } from 'lucide-react'
-import { resume, certificates } from '@/data/resume'
+import { resume, certificates, Certificate } from '@/data/resume'
 
 interface TerminalModalProps {
   isOpen: boolean
@@ -69,7 +69,7 @@ export function TerminalModal({ isOpen, onClose }: TerminalModalProps) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-muted-foreground font-mono">
               <div><span className="text-primary font-bold">about</span> - Overview of Raghul Raja</div>
               <div><span className="text-primary font-bold font-bold">projects</span> - List all {resume.projects.length} portfolio projects</div>
-              <div><span className="text-primary font-bold">skills</span> - Display key technical stack</div>
+              <div><span className="text-primary font-bold font-bold">skills</span> - Display key technical stack</div>
               <div><span className="text-primary font-bold">certifications</span> - Show industry certificates</div>
               <div><span className="text-primary font-bold">experience</span> - View internship experience</div>
               <div><span className="text-primary font-bold">contact</span> - Get email, phone & socials</div>
@@ -127,7 +127,7 @@ export function TerminalModal({ isOpen, onClose }: TerminalModalProps) {
         response = (
           <div className="space-y-1 text-xs font-mono text-emerald-400">
             <p className="font-bold text-yellow-400 mb-1">Industry Certifications ({certificates.length}):</p>
-            {certificates.map(c => (
+            {certificates.map((c: Certificate) => (
               <div key={c.id}>• {c.title} — <span className="text-muted-foreground">{c.issuer} ({c.date})</span></div>
             ))}
           </div>

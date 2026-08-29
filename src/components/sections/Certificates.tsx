@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { certificates } from '@/data/resume'
+import { certificates, Certificate } from '@/data/resume'
 import { cn } from '@/utils/cn'
 import { useState, useMemo, useEffect } from 'react'
 import {
@@ -16,9 +16,13 @@ import {
   Search,
   Calendar,
   FileText,
+  Sparkles,
+  Eye,
 } from 'lucide-react'
 
 import { PdfViewerModal } from '@/components/ui/PdfViewerModal'
+import { CertificateHoloCard3D } from '@/components/ui/CertificateHoloCard3D'
+import soundEngine from '@/utils/soundEngine'
 
 const categoryIcons: Record<string, any> = {
   ai: Brain,
@@ -48,25 +52,25 @@ export function getCertificateUrl(file: string): string {
   if (!file) return ''
   if (file.startsWith('http://') || file.startsWith('https://')) return file
   if (file.startsWith('/')) return encodeURI(file)
-  return `/certificates/${encodeURIComponent(file)}`
+  return `/certificates/${encodeURI(file)}`
 }
 
 export default function Certificates() {
   const [activeCategory, setActiveCategory] = useState('All')
   const [search, setSearch] = useState('')
-  const [selectedCert, setSelectedCert] = useState<(typeof certificates)[0] | null>(null)
+  const [selectedCert, setSelectedCert] = useState<Certificate | null>(null)
   const [previewError, setPreviewError] = useState(false)
   const [activePdfModal, setActivePdfModal] = useState<{ url: string; title: string } | null>(null)
 
   const filtered = useMemo(() => {
-    return certificates.filter(cert => {
+    return certificates.filter((cert: Certificate) => {
       const matchesCategory =
         activeCategory === 'All' || cert.category === activeCategory.toLowerCase()
       const query = search.toLowerCase()
       const matchesSearch =
         cert.title.toLowerCase().includes(query) ||
         cert.issuer.toLowerCase().includes(query) ||
-        cert.skills.some(skill => skill.toLowerCase().includes(query))
+        cert.skills.some((skill: string) => skill.toLowerCase().includes(query))
       return matchesCategory && matchesSearch
     })
   }, [activeCategory, search])
@@ -90,16 +94,20 @@ export default function Certificates() {
           transition={{ duration: 0.7 }}
           className="mb-12 md:mb-16"
         >
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-mono mb-3">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" /> 3D Foil Holographic Collector Cards
+          </div>
           <h2 className="font-heading text-4xl md:text-5xl font-bold tracking-tight">
             <span className="bg-clip-text text-transparent bg-aurora-gradient animate-aurora">
-              Certificates
+              Certificates & Credentials
             </span>
           </h2>
           <p className="mt-4 text-muted-foreground max-w-2xl">
-            Professional certifications, internship completion credentials, and continuous learning achievements.
+            Interactive 3D Holographic Trading Cards featuring 180° double-sided flip, high-res previews & verified credential links.
           </p>
         </motion.div>
 
+        {/* Filter & Search Bar */}
         <div className="mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-2">
             {categories.map(cat => {
@@ -107,7 +115,11 @@ export default function Certificates() {
               return (
                 <button
                   key={cat}
-                  onClick={() => setActiveCategory(cat)}
+                  onClick={() => {
+                    soundEngine.playClickSound()
+                    setActiveCategory(cat)
+                  }}
+                  onMouseEnter={() => soundEngine.playHoverSound()}
                   className={cn(
                     'px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 border cursor-pointer',
                     isActive
@@ -133,6 +145,7 @@ export default function Certificates() {
           </div>
         </div>
 
+        {/* 3D Holographic Trading Cards Grid */}
         <motion.div
           variants={container}
           initial="hidden"
@@ -140,59 +153,15 @@ export default function Certificates() {
           key={`${activeCategory}-${search}`}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {filtered.map(cert => {
-            const Icon = categoryIcons[cert.category] || Award
-            const isPdf = cert.file.toLowerCase().endsWith('.pdf')
-            return (
-              <motion.div
-                key={cert.id}
-                variants={card}
-                className="glass rounded-2xl p-6 flex flex-col hover:border-glass-borderHover transition-all duration-300 hover:shadow-glass-hover group"
-              >
-                <div className="flex items-center justify-between gap-3 mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-xl bg-primary/10 text-primary border border-primary/20">
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      {cert.issuer}
-                    </span>
-                  </div>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-white/5 border border-white/10 text-muted-foreground">
-                    {isPdf ? 'PDF' : 'IMAGE'}
-                  </span>
-                </div>
-
-                <h3 className="font-heading text-lg font-semibold text-foreground mb-2 leading-snug">
-                  {cert.title}
-                </h3>
-
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-4">
-                  <Calendar className="w-3.5 h-3.5" />
-                  {cert.date}
-                </div>
-
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {cert.skills.map(skill => (
-                    <span
-                      key={skill}
-                      className="px-2.5 py-1 rounded-lg bg-secondary/10 text-secondary text-[10px] font-medium border border-secondary/20"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-
-                <button
-                  onClick={() => setSelectedCert(cert)}
-                  className="mt-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-primary/10 text-primary text-sm font-medium border border-primary/20 hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer"
-                >
-                  View Certificate
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </button>
-              </motion.div>
-            )
-          })}
+          {filtered.map((cert: Certificate) => (
+            <motion.div key={cert.id} variants={card}>
+              <CertificateHoloCard3D
+                cert={cert}
+                onSelectCert={(c: Certificate) => setSelectedCert(c)}
+                onOpenPdf={(url, title) => setActivePdfModal({ url, title })}
+              />
+            </motion.div>
+          ))}
         </motion.div>
 
         {filtered.length === 0 && (
@@ -206,6 +175,7 @@ export default function Certificates() {
         )}
       </div>
 
+      {/* FULL CERTIFICATE DETAILS & DOCUMENT PREVIEW MODAL */}
       <AnimatePresence>
         {selectedCert && (
           <motion.div
@@ -216,7 +186,7 @@ export default function Certificates() {
               setSelectedCert(null)
               setPreviewError(false)
             }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -238,7 +208,7 @@ export default function Certificates() {
                     <h3 className="font-heading text-xl font-bold text-foreground">
                       {selectedCert.title}
                     </h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground font-mono">
                       {selectedCert.issuer}
                     </p>
                   </div>
@@ -257,12 +227,12 @@ export default function Certificates() {
 
               <div className="space-y-5">
                 <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                  <span className="inline-flex items-center gap-1.5">
+                  <span className="inline-flex items-center gap-1.5 font-mono">
                     <Calendar className="w-4 h-4 text-secondary" />
                     Issued: {selectedCert.date}
                   </span>
                   {selectedCert.expiry && (
-                    <span className="inline-flex items-center gap-1.5">
+                    <span className="inline-flex items-center gap-1.5 font-mono">
                       <Calendar className="w-4 h-4 text-accent" />
                       Expires: {selectedCert.expiry}
                     </span>
@@ -274,10 +244,10 @@ export default function Certificates() {
                 </p>
 
                 <div className="flex flex-wrap gap-2">
-                  {selectedCert.skills.map(skill => (
+                  {selectedCert.skills.map((skill: string) => (
                     <span
                       key={skill}
-                      className="px-3 py-1.5 rounded-lg bg-secondary/10 text-secondary text-xs font-medium border border-secondary/20"
+                      className="px-3 py-1.5 rounded-lg bg-secondary/10 text-secondary text-xs font-mono border border-secondary/20"
                     >
                       {skill}
                     </span>
@@ -286,10 +256,10 @@ export default function Certificates() {
 
                 {selectedCert.credentialId && (
                   <div className="glass rounded-xl p-4 border border-glass-border">
-                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1 font-mono">
                       Credential ID
                     </p>
-                    <p className="font-mono text-sm text-foreground">
+                    <p className="font-mono text-sm text-cyan-300 font-bold">
                       {selectedCert.credentialId}
                     </p>
                   </div>
@@ -297,8 +267,8 @@ export default function Certificates() {
 
                 {/* CERTIFICATE DOCUMENT PREVIEW AREA */}
                 <div className="pt-4 border-t border-glass-border space-y-4">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Document Preview
+                  <p className="text-xs font-mono font-semibold uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
+                    <Eye className="w-4 h-4 text-primary" /> Certificate Document Preview
                   </p>
 
                   {(() => {
@@ -307,7 +277,7 @@ export default function Certificates() {
 
                     if (isPdf) {
                       return (
-                        <div className="w-full h-72 md:h-96 rounded-2xl overflow-hidden border border-glass-border bg-neutral-950 relative shadow-inner">
+                        <div className="w-full h-80 md:h-[400px] rounded-2xl overflow-hidden border border-glass-border bg-neutral-950 relative shadow-inner">
                           <iframe
                             src={`${fileUrl}#toolbar=0&navpanes=0`}
                             className="w-full h-full border-0"
@@ -318,13 +288,13 @@ export default function Certificates() {
                     }
 
                     return (
-                      <div className="flex items-center justify-center p-4 rounded-2xl glass border border-glass-border bg-black/20">
+                      <div className="flex items-center justify-center p-4 rounded-2xl glass border border-glass-border bg-black/40 overflow-hidden">
                         {!previewError ? (
                           <img
                             src={fileUrl}
                             onError={() => setPreviewError(true)}
                             alt={selectedCert.title}
-                            className="max-h-72 w-auto rounded-xl border border-glass-border object-contain shadow-lg"
+                            className="max-h-96 w-auto rounded-xl border border-glass-border object-contain shadow-2xl transition-transform hover:scale-105"
                           />
                         ) : (
                           <div className="flex flex-col items-center gap-2 py-8 text-sm text-muted-foreground">
@@ -346,9 +316,10 @@ export default function Certificates() {
                           {isPdf && (
                             <button
                               onClick={() => {
+                                soundEngine.playClickSound()
                                 setActivePdfModal({ url: fileUrl, title: selectedCert.title })
                               }}
-                              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl glass glass-hover text-foreground text-sm font-medium border border-glass-border transition-colors cursor-pointer"
+                              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl glass glass-hover text-cyan-300 text-sm font-mono border border-cyan-500/30 hover:border-cyan-500/60 transition-colors cursor-pointer"
                             >
                               <FileText className="w-4 h-4 text-primary" />
                               Interactive PDF Viewer
@@ -358,10 +329,10 @@ export default function Certificates() {
                             href={fileUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors shadow-glow whitespace-nowrap cursor-pointer"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-mono font-semibold hover:bg-primary/90 transition-colors shadow-glow whitespace-nowrap cursor-pointer"
                           >
                             <ExternalLink className="w-4 h-4" />
-                            Open in New Tab
+                            Open Certificate ↗
                           </a>
                         </>
                       )

@@ -1,0 +1,634 @@
+PORTFOLIO AISoftware Requirements Specification + Master Implementation Plan
+RAG + LLM + ATS Resume Intelligence + Resume Builder + Placement Preparation
+Version 1.0 | Planning baseline | 23 August 2026
+Document property
+Value
+Product name
+Portfolio AI
+Primary purpose
+A grounded AI system that understands the portfolio as the single source of truth and acts as a recruiter-facing assistant plus a private career coach.
+Primary users
+Visitors / HR / Recruiters; Portfolio owner
+Core architecture
+React/Vite frontend + FastAPI AI backend + PostgreSQL/pgvector + object storage + LLM + embeddings + async ingestion
+Primary knowledge source
+Portfolio website content, project repositories, resume, certificates, project documentation and curated placement-preparation material
+Freshness requirement
+Near-real-time synchronization after approved portfolio/repository changes; scheduled reconciliation for missed changes
+Quality objective
+Grounded, source-traceable answers with ATS analysis, not generic hallucinated career advice
+1. Executive Summary
+Portfolio AI is proposed as a dedicated AI subsystem around the personal portfolio rather than a basic chat widget. It will ingest and normalize portfolio pages, project descriptions, technology stacks, repository documentation, resume content and selected career-preparation knowledge. A retrieval layer will then supply evidence to an LLM so answers remain tied to the portfolio owner’s actual data. The design follows established RAG patterns: hybrid retrieval is valuable when both exact technical keywords and semantic similarity matter, which is especially relevant for recruiter queries and ATS analysis. NVIDIA’s RAG guidance explicitly describes combining sparse keyword retrieval such as BM25 with dense vector retrieval, and Google’s reference architectures describe RAG systems with managed vector search and PostgreSQL-compatible vector storage patterns.
+The product has four major AI modes: Portfolio Q&A; ATS Resume Checker; ATS Resume Builder; Placement Preparation Coach. A fifth cross-cutting capability, Knowledge Sync, keeps the AI knowledge base aligned with portfolio changes. GitHub repository webhooks can trigger ingestion when the source repository changes, while scheduled reconciliation provides a safety net.
+2. Product Vision
+Create one personal AI system that can answer: “Who is this candidate?”, “What did he build?”, “Why did he choose this technology?”, “How does this project work?”, “Is this resume ATS-friendly for this role?”, “What keywords are missing?”, and “How should he prepare for the placement process?” - while separating factual portfolio evidence from generated coaching content.
+3. Goals
+Answer portfolio questions using only verified portfolio knowledge whenever a factual claim is requested.
+Retrieve exact project names, technologies, features, architecture, outcomes, repository links and resume evidence.
+Analyze an uploaded resume against a job description with ATS-oriented structure and keyword checks.
+Generate an editable ATS-friendly resume tailored to a target role using only verified candidate facts.
+Provide aptitude, grammar, vocabulary, verbs, group discussion, technical and HR-round preparation.
+Automatically detect portfolio/repository changes and update the AI knowledge base without manual re-training.
+Expose source citations/evidence for factual answers and maintain knowledge-version lineage.
+Provide an admin/owner dashboard to inspect sync status, documents, chunks, retrieval quality, evaluations and failed jobs.
+4. Non-Goals
+The model will not invent achievements, internships, certifications, percentages, employers, metrics or technologies.
+The system will not claim a resume is guaranteed to pass every ATS; different ATS products have different parsing and ranking behaviors.
+The system will not treat “IEEE standard” as a universal ATS resume specification. IEEE-style technical quality can be used as a documentation and writing-quality benchmark, while ATS compatibility remains a separate concern.
+The public assistant will not expose private documents or owner-only analytics.
+Fine-tuning is not required for v1; retrieval plus strong prompting, schemas and evaluation is the preferred first architecture.
+5. Evidence and Research Findings
+Finding
+Design implication
+Hybrid retrieval combines sparse keyword retrieval and dense vector retrieval for technical/domain-heavy content.
+Use hybrid retrieval for portfolio Q&A and ATS keyword matching, with tunable weighting.
+Google RAG reference architectures support vector search and PostgreSQL-compatible designs.
+Use PostgreSQL + pgvector as the initial operational/vector store to reduce the number of databases.
+OpenAI vector stores support file ingestion and configurable chunking, and Structured Outputs can force JSON-schema-conformant model responses.
+Use schema-constrained outputs for ATS reports, resume sections and evaluation records; choose managed retrieval only if it simplifies operations enough.
+GitHub repository webhooks can subscribe to repository events and deliver JSON payloads.
+Use push/repository webhooks as the main incremental sync trigger; keep scheduled reconciliation as a fallback.
+Career guidance from Harvard recommends basic formatting, explicit skills and contextual job-description keywords when optimizing resumes.
+ATS checker should score structure, skills, keywords and context rather than just counting keywords.
+IEEE sources discuss resumes and action-context-result style bullet construction, but IEEE standards are a separate formal standards system.
+Use IEEE-inspired technical quality and evidence-based bullet writing, not a fictional “IEEE ATS standard”.
+6. Functional Requirements
+ID
+Requirement
+Description
+FR-001
+Portfolio Q&A
+System shall answer questions about candidate profile, education, skills, projects, experience, certifications, links and portfolio content using retrieved evidence.
+FR-002
+Grounded response mode
+For factual portfolio claims, system shall include source metadata such as source type, page/repository and last indexed version.
+FR-003
+Unknown handling
+When evidence is insufficient, system shall say that the information is not found and optionally suggest what information should be added.
+FR-004
+Role-aware recruiter mode
+User may provide a role or job description; system shall analyze candidate fit using the portfolio knowledge base.
+FR-005
+Resume upload
+User shall upload PDF/DOCX/TXT resume for parsing and normalization.
+FR-006
+Resume parser
+System shall extract sections, contact data, skills, education, experience, projects, certifications and metrics.
+FR-007
+ATS checker
+System shall produce ATS-oriented scores for parseability, structure, keyword alignment, skills coverage, experience relevance and evidence quality.
+FR-008
+JD analysis
+System shall extract role title, required skills, preferred skills, responsibilities, keywords and seniority signals from a job description.
+FR-009
+Gap analysis
+System shall identify missing, weak or unsupported skills/keywords and distinguish “missing from resume” from “not present in portfolio”.
+FR-010
+Resume builder
+System shall generate an editable ATS-friendly resume using verified candidate facts and a selected target role.
+FR-011
+Resume variants
+System shall support role-specific versions, e.g. Full Stack, AI/ML, Data, DevOps/Cloud, Software Engineer.
+FR-012
+Resume export
+System shall generate DOCX and PDF outputs and preserve parser-friendly text structure.
+FR-013
+Placement practice
+System shall generate aptitude, grammar, vocabulary, verb and sentence-correction exercises.
+FR-014
+GD coach
+System shall simulate group-discussion topics and score structure, relevance, clarity, counterpoints and conclusion.
+FR-015
+HR coach
+System shall conduct mock HR interviews using candidate-specific facts from portfolio data.
+FR-016
+Technical interview coach
+System shall generate project/technology questions from the actual candidate portfolio and explain strong answers.
+FR-017
+Practice history
+System shall store practice attempts, scores, mistakes and improvement trends for the owner.
+FR-018
+Knowledge sync
+System shall ingest updates from approved sources after change events and maintain a versioned knowledge snapshot.
+FR-019
+Webhook processing
+System shall verify webhook authenticity, enqueue work idempotently and retry transient failures.
+FR-020
+Admin knowledge dashboard
+Owner shall see indexed sources, last sync time, document status, chunk counts, failed jobs and evaluation results.
+FR-021
+Feedback loop
+Owner/admin shall mark an answer as correct, partially correct or wrong and associate feedback with a source/knowledge version.
+FR-022
+Auditability
+System shall record model version, prompt version, knowledge snapshot, retrieved sources and outcome metadata for critical AI actions.
+7. Non-Functional Requirements
+ID
+Area
+Target
+NFR-001
+Accuracy
+Target >= 90% factual-grounding accuracy on curated portfolio QA benchmark before production release.
+NFR-002
+Citation coverage
+Target >= 95% of factual portfolio answers contain retrievable source evidence.
+NFR-003
+Latency
+Target p95 < 5 seconds for standard text Q&A excluding streaming generation/network variability.
+NFR-004
+Freshness
+Target knowledge freshness < 5 minutes after a successful repository push/sync workflow; exact time depends on queue and deployment.
+NFR-005
+Reliability
+Webhook jobs must be idempotent and retryable; dead-letter failures must be visible.
+NFR-006
+Security
+Never expose LLM API keys to browser clients; secrets remain server-side.
+NFR-007
+Privacy
+Private resume uploads and owner analytics require authenticated access.
+NFR-008
+Observability
+Log request ID, model, retrieval latency, generation latency, source IDs, token/cost metadata and error state without logging unnecessary personal data.
+NFR-009
+Maintainability
+Backend should use modular services/routes with typed schemas and unit/integration/evaluation tests.
+NFR-010
+Portability
+Core RAG interfaces shall be provider-agnostic enough to swap LLM/embedding providers later.
+8. High-Level System Architecture
+Recommended architecture: keep the public portfolio frontend separate from the AI backend. The portfolio remains the presentation layer and canonical public content source; Portfolio AI becomes a dedicated service that owns ingestion, retrieval, AI orchestration, resume processing and private owner workflows.
+Architecture flow:
+Portfolio Website / GitHub / Resume / Curated Prep Content
+|
+v
+Ingestion Gateway -> Normalizer -> Chunker -> Metadata Enricher -> Embedding Worker
+|                                        |
++----> PostgreSQL (canonical metadata)   +----> pgvector (dense index)
+|                                        +----> Full-text index (sparse retrieval)
+v
+Retrieval Orchestrator -> Hybrid Search -> Reranker -> Context Builder -> LLM
+|                         |
+|                         +--> Structured JSON / Answer / Resume / Coaching Output
+v
+Grounding + Policy Checks
+|
+v
+FastAPI Application -> React AI UI / Owner Dashboard
+9. Core Components
+Component
+Responsibility
+Preferred technology
+Portfolio Web
+Existing public UI and content presentation.
+React + TypeScript + Vite + Tailwind + existing deployment
+AI Web UI
+Chat, ATS checker, resume builder, interview/practice views.
+React + TypeScript
+API Gateway / AI Backend
+Authentication, chat APIs, resume APIs, admin APIs, streaming.
+FastAPI + Pydantic
+Ingestion Service
+Fetch, parse, normalize and version portfolio sources.
+Python workers
+Queue
+Async sync and resume-processing jobs.
+Redis + worker or managed queue
+Operational DB
+Users, sources, documents, chunks metadata, runs, scores, audit.
+PostgreSQL
+Vector store
+Dense embeddings.
+pgvector in PostgreSQL initially
+Sparse index
+Exact token retrieval for skills and technologies.
+PostgreSQL full-text search initially; OpenSearch later if needed
+Object storage
+Resume files, generated documents and source snapshots.
+S3-compatible storage / managed object store
+LLM provider
+Answer generation, extraction, transformation, coaching.
+Provider abstraction supporting OpenAI/Gemini/local model options
+Embedding provider
+Dense vector representation.
+Provider abstraction
+Observability
+Errors, traces, metrics, evaluations.
+OpenTelemetry-compatible stack / provider monitoring
+10. RAG Knowledge Model
+The portfolio should not be ingested as one giant text blob. Convert it into typed knowledge units with metadata. Recommended knowledge types include: profile, education, skill, experience, project, project-feature, project-architecture, technology, certification, achievement, link, resume-bullet, FAQ, and placement-content.
+Metadata field
+Example
+source_type
+portfolio_page | github_repo | resume | certificate | prep_content
+source_uri
+https://... or repository path
+document_version
+git commit SHA / content hash / upload version
+knowledge_type
+project / skill / education / experience / interview_fact
+section
+Projects / Skills / Experience
+entity_id
+project_abc123
+visibility
+public | owner_only
+last_updated_at
+ISO timestamp
+content_hash
+SHA-256 of normalized text
+confidence
+verified | inferred | generated
+11. Retrieval Strategy
+Classify the user query into one or more intents: portfolio_factual, recruiter_fit, ATS, resume_build, placement_practice, interview, general.
+Extract exact entities and keywords such as project name, technology name, job title and skill aliases.
+Run dense vector retrieval for semantic similarity.
+Run sparse/full-text retrieval for exact keywords, technologies and names.
+Fuse results using weighted hybrid ranking; technical/ATS queries should bias toward sparse matching when exact terms are important.
+Apply metadata filters such as visibility, document type and current knowledge version.
+Rerank the top candidates and build a compact evidence context.
+Generate a response with citations/metadata and a “not found” behavior when the evidence is insufficient.
+12. LLM Orchestration
+Use the LLM as a controlled reasoning/generation layer, not as the database. Every important workflow gets an explicit system prompt, retrieval contract, JSON schema and validator. Structured outputs are preferable for ATS reports, extracted job descriptions, resume sections and scoring records because the model response can be constrained to a defined schema.
+13. Portfolio Sync / Near-Real-Time Update Design
+Enable a repository webhook for push events on the portfolio repository and relevant project repositories. GitHub supports repository webhooks and push-event payloads.
+Webhook endpoint validates a secret/signature and immediately returns 2xx after placing an idempotent job on the queue.
+Worker resolves the commit SHA, fetches changed files, pages or documentation, and ignores irrelevant files such as build output or node_modules.
+Normalizer converts source content to clean canonical text plus typed entities.
+Document versioning compares content hashes. Unchanged content is skipped.
+Only changed chunks are embedded and indexed; deleted chunks are marked inactive.
+Knowledge snapshot version is advanced after successful indexing.
+Cache invalidation ensures new conversations use the newest successful snapshot.
+A scheduled nightly reconciliation checks that webhook processing did not miss a change.
+14. ATS Resume Checker Design
+The checker must be more than a keyword counter. It should model at least six dimensions: parseability, structure, job-description alignment, skills coverage, evidence/impact quality and consistency. Harvard recommends basic formatting, explicit skills and contextual keywords; Berkeley advises standard formatting, common section titles and avoiding layout elements that can confuse ATS parsing.
+Dimension
+Checks
+Sample output
+Parseability
+Section detection, reading order, dates, contact extraction, duplicate text.
+Parseability 96%
+Structure
+Standard headings, clean layout, excessive tables/text boxes/graphics, section completeness.
+Structure 88%
+Keyword alignment
+Exact + normalized + semantic role terms, weighted by importance.
+JD alignment 72%
+Skills coverage
+Required vs preferred vs demonstrated skills.
+12/16 required skills evidenced
+Evidence quality
+Action-context-result, measurable impact, project ownership, credible verbs.
+Impact quality: strong / needs evidence
+Consistency
+Date format, role naming, tense, spelling, duplicate technologies, link validity.
+3 consistency issues
+15. ATS Scoring Model - Proposed
+Initial scoring formula (tunable after evaluation): Total = 20% parseability + 15% structure + 25% keyword/JD alignment + 15% skills coverage + 15% evidence quality + 10% consistency. The product must show sub-scores and evidence rather than a single unexplained number. A job-specific score is not a guarantee of recruiter selection.
+16. ATS Resume Builder Design
+User selects target role and optionally pastes a job description.
+AI extracts required/preferred skills and responsibilities.
+Portfolio knowledge is queried for verified evidence.
+Candidate facts are transformed into role-specific bullets using action-context-result structure where appropriate.
+Unsupported claims are rejected by a fact validator.
+Resume sections are assembled into an ATS-safe template using conventional headings.
+User previews/edit the result, then downloads DOCX/PDF.
+Generated resume receives a post-generation ATS parse simulation and a final checker report.
+17. Placement Preparation Engine
+Module
+Portfolio-grounded behavior
+Aptitude
+Generic skill practice is allowed; technical and project questions are grounded in the candidate profile.
+Grammar
+Grammar questions plus correction explanations and personalized weak-area tracking.
+Verbs / Vocabulary
+Action verb practice tied to resume bullet improvement and interview communication.
+Group Discussion
+Topic simulation; feedback on relevance, confidence structure, counterargument and conclusion.
+HR Round
+Questions such as tell-me-about-yourself, strengths, weakness, goals, project ownership and behavioral scenarios using actual portfolio evidence.
+Technical Round
+Questions generated from candidate projects and stated technology stack, not fabricated experience.
+Mock Interview
+Multi-turn session with scoring rubric and end-of-session improvement plan.
+18. Database Design
+Table
+Important columns
+Purpose
+users
+id, role, email_hash, created_at
+Authentication and ownership
+portfolio_sources
+id, type, uri, repo, branch, visibility, enabled
+Registered knowledge sources
+documents
+id, source_id, version, content_hash, status, last_indexed_at
+Versioned source documents
+chunks
+id, document_id, entity_type, entity_id, text, token_count, metadata_json, active
+Retrieval units
+chunk_embeddings
+chunk_id, model, vector
+Dense embeddings; or vector column on chunks depending on ORM strategy
+skills
+id, canonical_name, aliases, category
+Skill normalization
+projects
+id, name, summary, stack, repo_url, live_url
+Structured project facts
+job_descriptions
+id, raw_text, parsed_json, created_by, target_role
+JD analysis inputs
+resume_runs
+id, user_id, resume_file_id, jd_id, report_json, score, model_version
+ATS analysis history
+resume_documents
+id, run_id, format, file_url, content_hash
+Generated outputs
+practice_sessions
+id, user_id, type, score, started_at, ended_at
+Placement preparation analytics
+questions
+id, type, difficulty, category, source_scope
+Question bank
+attempts
+id, session_id, question_id, answer, score, feedback
+Practice attempts
+chat_sessions
+id, user_id, mode, created_at
+Chat sessions
+chat_messages
+id, session_id, role, content, model_version
+Conversation history
+retrieval_runs
+id, message_id, query, strategy, latency_ms, result_ids
+RAG observability
+knowledge_sync_jobs
+id, source_id, trigger, commit_sha, status, retries, error
+Sync queue history
+evaluations
+id, case_id, model_version, retrieval_version, score, notes
+AI quality benchmark
+19. API Design
+Method
+Endpoint
+Purpose
+POST
+/api/v1/chat
+Portfolio AI Q&A and recruiter mode
+POST
+/api/v1/resume/analyze
+Resume + optional JD ATS analysis
+POST
+/api/v1/resume/build
+Generate tailored ATS resume draft
+POST
+/api/v1/resume/export
+Export DOCX/PDF
+POST
+/api/v1/job-descriptions/analyze
+Extract role signals from JD
+POST
+/api/v1/practice/session
+Create practice session
+POST
+/api/v1/practice/answer
+Grade an answer
+GET
+/api/v1/practice/progress
+Return progress analytics
+POST
+/api/v1/webhooks/github
+Receive verified repository events
+POST
+/api/v1/sync/rebuild
+Manual owner-triggered reindex
+GET
+/api/v1/admin/knowledge
+Knowledge base status
+GET
+/api/v1/admin/evaluations
+Evaluation dashboard
+GET
+/api/v1/health
+Health/readiness check
+20. Security Architecture
+LLM and GitHub credentials are server-side only.
+GitHub webhook requests are authenticated and replay-protected.
+Portfolio public content and private owner content are separated at the retrieval-filter level.
+Resumes are encrypted at rest where supported and access-controlled by user ownership.
+File uploads are validated by MIME type, extension, file size and malware scanning where available.
+Rate-limit public chat and protect expensive AI endpoints from abuse.
+Never include secrets, private tokens or environment variables in the RAG corpus.
+Keep prompt-injection defenses in both retrieval and generation: retrieved text is data, not instruction authority.
+21. Prompt / Guardrail Contract
+System prompt policy for factual portfolio mode: “Use retrieved evidence as the only authority for candidate-specific facts. Do not invent. When evidence is missing, state that it is not found. Distinguish verified facts, user-provided facts and general advice. Cite the evidence used.” For ATS mode: “Analyze the uploaded resume and job description first. Do not add skills unless supported by the resume or verified portfolio.” For resume generation: “Generate only from the verified candidate fact set.”
+22. Evaluation Strategy
+Create a fixed evaluation set before production. It should contain at least: 50 portfolio factual questions, 20 recruiter-fit questions, 20 ATS/JD pairs, 20 resume-bullet transformations, 20 HR questions and 20 technical interview questions. Human-labeled answers become the regression benchmark. Each deployment must report grounded accuracy, unsupported-claim rate, retrieval hit rate, citation coverage and schema validity.
+23. Testing Plan
+Layer
+Tests
+Exit criterion
+Unit
+Parsers, normalizers, scoring formulas, skill aliasing, validators.
+>= 90% coverage on core business logic.
+Integration
+GitHub webhook -> queue -> ingestion -> index; resume -> parser -> ATS; chat -> retrieval -> LLM.
+All golden-path flows pass.
+RAG evaluation
+Question set with known source chunks.
+Retrieval and grounding thresholds met.
+Security
+Webhook replay, invalid signature, prompt injection, private-source leakage, file abuse.
+No high-severity leakage path.
+Performance
+Concurrent chat, indexing burst, resume uploads.
+p95 and queue SLOs met.
+UI/E2E
+Chat, upload, report, builder, export and owner dashboard.
+Critical browser flows pass.
+Regression
+Every prompt/model/retriever change runs benchmark suite.
+No unexplained regression beyond threshold.
+24. CI/CD and Deployment
+GitHub Actions runs lint, type checks, backend tests, integration tests and RAG evaluation smoke suite.
+Frontend deploys to Vercel or the current frontend platform.
+FastAPI backend deploys to Render or a comparable container/service platform.
+PostgreSQL with pgvector is hosted as a managed database where possible.
+Redis/queue is hosted as a managed service or containerized service.
+Production AI secrets live in platform secret managers, not repository files.
+Use separate staging and production environments.
+25. Recommended Technology Stack
+Layer
+Recommendation
+Why
+Frontend
+React + TypeScript + Vite
+Fits current portfolio architecture and supports reusable AI UI.
+Backend
+Python + FastAPI + Pydantic
+Strong fit for AI pipelines, parsing and typed APIs.
+Database
+PostgreSQL + pgvector
+Operational data and vector retrieval in one system.
+Search
+PostgreSQL FTS first; OpenSearch/Elasticsearch later if scale requires
+Keeps v1 simple while preserving exact keyword search.
+Queue
+Redis + Celery/RQ/Arq or managed queue
+Separates webhook response from long-running ingestion.
+LLM
+Provider abstraction: OpenAI/Gemini/local models
+Avoid lock-in and support cost/quality experimentation.
+Embeddings
+Provider abstraction
+Allows embedding model changes without redesigning the app.
+Document parsing
+pypdf / python-docx / structured HTML extraction; add OCR only for image/scanned PDFs
+Covers standard resume/portfolio sources.
+Files
+S3-compatible object storage
+Resumes and exports should not live in the relational DB.
+Observability
+OpenTelemetry + application metrics/logging
+Makes AI latency and retrieval failures measurable.
+Auth
+JWT/session-based owner auth
+Public visitor mode and private owner mode need clear separation.
+26. Resource Requirements
+Resource
+Required?
+Notes
+LLM API key
+Yes unless fully local
+Needed for generation, extraction and coaching.
+Embedding model/API
+Yes
+Needed for vector retrieval.
+GitHub repository access/webhook
+Yes
+Needed for automatic portfolio knowledge sync.
+PostgreSQL + pgvector
+Yes
+Recommended primary data/vector store.
+Redis/queue
+Recommended
+Needed for robust async ingestion and retries.
+Object storage
+Recommended
+Needed for resume uploads and generated document files.
+Domain/HTTPS backend URL
+Yes for webhooks
+Webhook provider must reach a secure public endpoint.
+DOCX/PDF generation libraries
+Yes
+Required for resume export.
+Monitoring/logging
+Recommended
+Needed for production debugging and evaluation.
+27. Cost-Control Strategy
+Use retrieval before generation so only small, relevant context reaches the LLM.
+Cache stable portfolio answers and embeddings.
+Use a smaller model for classification, extraction and scoring where quality remains acceptable.
+Use a stronger model only for complex resume rewriting or interview reasoning.
+Batch embedding updates and only re-embed changed chunks.
+Keep a hard token budget per request and rate-limit anonymous users.
+28. Risks and Mitigations
+Risk
+Impact
+Mitigation
+Hallucinated candidate facts
+High
+Strict retrieval contract, source citations, fact validator, benchmark.
+Stale knowledge after portfolio changes
+High
+Webhook + queue + scheduled reconciliation + content hashes.
+ATS score gives false confidence
+High
+Show sub-scores and caveats; never guarantee ATS pass.
+Resume contains unsupported skills
+High
+Verified candidate fact set and generation validator.
+Webhook outage/missed event
+Medium
+Nightly reconciliation and manual rebuild endpoint.
+Prompt injection in portfolio/repository text
+High
+Treat retrieved content as untrusted data; isolate instructions from content.
+LLM provider outage
+Medium
+Provider abstraction, fallback model or degraded read-only mode.
+Database/vector growth
+Medium
+Chunk lifecycle, inactive deletion, indexes, optional future external vector DB.
+Privacy leakage
+High
+Public/private metadata filters and authenticated owner-only retrieval.
+Over-engineering v1
+Medium
+Start with PostgreSQL + pgvector + one queue + one LLM provider abstraction.
+29. Phased Implementation Roadmap
+Phase
+Deliverables
+Exit criteria
+Phase 0 - Discovery
+Inventory portfolio pages, repos, resume, tech stack and current hosting.
+Source map and content taxonomy approved.
+Phase 1 - Foundation
+FastAPI service, Postgres/pgvector, auth, source registry, logging.
+Healthy deploy with DB migrations and tests.
+Phase 2 - Ingestion
+Portfolio parser, GitHub sync, chunking, embeddings, hybrid retrieval.
+Golden retrieval questions achieve target hit rate.
+Phase 3 - Portfolio AI
+Chat UI, grounded answers, recruiter mode, citations.
+Factual QA benchmark passes.
+Phase 4 - ATS Engine
+Resume parser, JD parser, scoring, gap analysis.
+ATS benchmark and parser regression suite pass.
+Phase 5 - Resume Builder
+Role templates, bullet rewriting, DOCX/PDF export, validation.
+Generated resumes remain factual and parser-friendly.
+Phase 6 - Placement Coach
+Aptitude, grammar, verbs, GD, HR, technical interview modules.
+Scoring + history + personalized recommendations pass E2E tests.
+Phase 7 - Owner Dashboard
+Sync status, documents, evaluations, feedback and analytics.
+Owner can inspect and repair the knowledge system.
+Phase 8 - Hardening
+Security, load, privacy, cost controls, monitoring, disaster recovery.
+Production readiness review passes.
+30. MVP Recommendation
+Do not build all modules at once. The best MVP is: (1) portfolio ingestion, (2) hybrid RAG, (3) grounded Portfolio Q&A, (4) JD analysis + ATS checker, and (5) GitHub-based auto-sync. Once these are reliable, add Resume Builder and Placement Coach. This ordering reduces the risk of building a beautiful frontend on top of an unreliable knowledge system.
+31. Definition of Done for Portfolio AI v1
+Portfolio AI can answer at least 50 curated candidate questions with >= 90% factual accuracy.
+Every candidate-specific answer exposes evidence metadata.
+A GitHub push results in a new knowledge snapshot without manual re-upload.
+ATS checker can compare a resume with a job description and show actionable gaps.
+Resume Builder uses only verified candidate facts and produces parser-friendly DOCX/PDF.
+Owner can run and review aptitude, grammar, GD, HR and technical practice sessions.
+Private resume/owner data cannot be retrieved from public chat.
+Tests, logging, monitoring and rollback procedures are documented and automated in CI/CD.
+32. Recommended Next Build Order
+Freeze the portfolio knowledge schema and source inventory.
+Create FastAPI backend + PostgreSQL/pgvector + Redis queue.
+Implement source ingestion and GitHub webhook synchronization.
+Build hybrid retrieval with metadata filters and source citations.
+Integrate the first LLM provider behind a provider interface.
+Build the Portfolio AI chat interface inside the portfolio.
+Build ATS parser/scorer and golden evaluation dataset.
+Build ATS Resume Builder with DOCX/PDF export.
+Build placement preparation modules and progress dashboard.
+Run security/performance/evaluation tests and then production hardening.
+33. Research References
+Google Cloud Architecture Center - Generative AI with RAG reference architectures: https://docs.cloud.google.com/architecture/rag-reference-architectures
+Google Cloud - RAG infrastructure with Vector Search: https://docs.cloud.google.com/architecture/gen-ai-rag-vertex-ai-vector-search
+NVIDIA RAG Blueprint - Hybrid Search: https://docs.nvidia.com/rag/latest/hybrid_search.html
+OpenAI API - Vector store files: https://platform.openai.com/docs/api-reference/vector-stores-files
+OpenAI API - Structured Outputs / schema-constrained responses: https://platform.openai.com/docs/api-reference/evals/deleteRun
+GitHub Docs - Repository webhooks: https://docs.github.com/en/rest/repos/webhooks
+GitHub Docs - Webhook events and payloads: https://docs.github.com/en/webhooks/webhook-events-and-payloads
+Harvard FAS Career Services - AI for resumes and cover letters: https://careerservices.fas.harvard.edu/ai-resumes-and-cover-letters/
+UC Berkeley Career Engagement - ATS-friendly resumes: https://www.career.berkeley.edu/prepare-for-success/resumes/
+IEEE Professional Communication Society - Pitching Yourself: https://procomm.ieee.org/pitching-yourself-part-2-energize-your-resume/
+IEEE SA - Standards portal: https://standards.ieee.org/standard/
