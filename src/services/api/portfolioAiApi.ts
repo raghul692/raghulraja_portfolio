@@ -8,7 +8,17 @@ import { analyzeATSResume, ATSReport } from '../ai/atsAnalyzerEngine';
 import { generateIEEEResumeHTML } from '../ai/ieeeResumeEngine';
 import { evaluateGrammarSentence } from '../ai/interviewPrepEngine';
 
-const API_BASE_URL = import.meta.env.VITE_PORTFOLIO_AI_API_URL || 'https://raghulraja-portfolio.onrender.com/api';
+const getApiUrl = (): string => {
+  if (import.meta.env.VITE_PORTFOLIO_AI_API_URL) {
+    return import.meta.env.VITE_PORTFOLIO_AI_API_URL;
+  }
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    return 'http://localhost:8000/api';
+  }
+  return 'https://raghulraja-portfolio.onrender.com/api';
+};
+
+const API_BASE_URL = getApiUrl();
 
 export interface RAGQueryRequest {
   query: string;

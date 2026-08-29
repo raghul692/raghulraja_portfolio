@@ -106,15 +106,29 @@ export default function Contact() {
     return Object.keys(newErrors).length === 0
   }
 
+  const getApiUrl = (): string => {
+    if (import.meta.env.VITE_PORTFOLIO_AI_API_URL) {
+      return import.meta.env.VITE_PORTFOLIO_AI_API_URL;
+    }
+    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+      return 'http://localhost:8000/api';
+    }
+    return 'https://raghulraja-portfolio.onrender.com/api';
+  }
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    if (!validate()) return
+    if (!validate()) {
+      setSubmitStatus('error')
+      setSubmitMessage('Please check form fields: Name, Email, and Message (at least 20 characters) are required.')
+      return
+    }
 
     setIsSubmitting(true)
     setSubmitStatus('idle')
 
     try {
-      const apiUrl = import.meta.env.VITE_PORTFOLIO_AI_API_URL || 'https://raghulraja-portfolio.onrender.com/api';
+      const apiUrl = getApiUrl();
       const response = await fetch(`${apiUrl}/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -141,7 +155,7 @@ export default function Contact() {
       const errorMessage = err instanceof Error ? err.message : 'Failed to send message. Please try again later.'
       setSubmitMessage(
         errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')
-          ? 'Backend server is offline or unreachable. Please start the backend server.'
+          ? 'Backend server is offline or unreachable. Please check backend connection.'
           : errorMessage
       )
     } finally {
