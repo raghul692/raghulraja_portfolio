@@ -8,7 +8,7 @@ import { analyzeATSResume, ATSReport } from '../ai/atsAnalyzerEngine';
 import { generateIEEEResumeHTML } from '../ai/ieeeResumeEngine';
 import { evaluateGrammarSentence } from '../ai/interviewPrepEngine';
 
-const API_BASE_URL = import.meta.env.VITE_PORTFOLIO_AI_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL = import.meta.env.VITE_PORTFOLIO_AI_API_URL || 'https://raghulraja-portfolio.onrender.com/api';
 
 export interface RAGQueryRequest {
   query: string;
