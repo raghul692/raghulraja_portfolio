@@ -5,17 +5,23 @@ from app.config import settings
 
 logger = logging.getLogger("portfolio_ai_embeddings")
 
+if settings.GEMINI_API_KEY:
+    try:
+        genai.configure(api_key=settings.GEMINI_API_KEY)
+    except Exception as e:
+        logger.warning(f"Failed to configure genai in embeddings: {e}")
+
 def generate_embedding(text: str) -> list[float]:
-    """Generates normalized vector embedding (768 dimensions) for input text."""
+    """Generates normalized vector embedding for input text."""
     if settings.GEMINI_API_KEY:
         try:
             result = genai.embed_content(
-                model="models/text-embedding-004",
+                model="models/gemini-embedding-001",
                 content=text,
                 task_type="retrieval_document"
             )
             embedding = result.get("embedding", [])
-            if embedding and len(embedding) == 768:
+            if embedding:
                 return embedding
         except Exception as e:
             logger.warning(f"Gemini embedding error: {e}. Falling back to deterministic embedding.")

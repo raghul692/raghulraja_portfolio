@@ -185,17 +185,21 @@ def insert_chunk(doc_id: str, chunk_index: int, chunk_text: str, embedding: list
     return chunk_id
 
 
-def get_all_chunks():
-    """Fetches chunks from Supabase or fallback Local SQLite."""
-    try:
-        url = f"{settings.SUPABASE_URL}/rest/v1/document_chunks?select=*,portfolio_documents(title,category,document_key)"
-        res = requests.get(url, headers=supabase_headers(), timeout=5)
-        if res.status_code == 200 and len(res.json()) > 0:
-            return res.json()
-    except Exception as e:
-        logger.warning(f"Supabase get_all_chunks failed: {e}")
+_CHUNKS_CACHE = None
+_CHUNKS_CACHE_TIME = 0.0
 
-    # Fallback to local SQLite
+def get_all_chunks():
+    """Fetches chunks with 60-second in-memory caching from Supabase or Local SQLite fallback."""
+    global _CHUNKS_CACHE, _CHUNKS_CACHE_TIME
+    import time
+    now = time.time()
+    
+    # Return cached chunks if fresh (60 seconds TTL)
+    if _CHUNKS_CACHE is not None and (now - _CHUNKS_CACHE_TIME) < 60:
+        return _CHUNKS_CACHE
+
+    chunks = []
+    # 1. Quick local SQLite check first for maximum speed
     try:
         conn = sqlite3.connect(settings.LOCAL_DB_PATH)
         conn.row_factory = sqlite3.Row
@@ -205,9 +209,25 @@ def get_all_chunks():
         FROM document_chunks c
         LEFT JOIN portfolio_documents d ON c.document_id = d.id
         """).fetchall()
-        result = [dict(row) for row in rows]
+        chunks = [dict(row) for row in rows]
         conn.close()
-        return result
+        if chunks:
+            _CHUNKS_CACHE = chunks
+            _CHUNKS_CACHE_TIME = now
+            return chunks
     except Exception as e:
-        logger.error(f"Local SQLite get_all_chunks error: {e}")
-        return []
+        logger.warning(f"Local SQLite get_all_chunks notice: {e}")
+
+    # 2. Supabase fallback if local database is empty
+    try:
+        url = f"{settings.SUPABASE_URL}/rest/v1/document_chunks?select=*,portfolio_documents(title,category,document_key)"
+        res = requests.get(url, headers=supabase_headers(), timeout=1.5)
+        if res.status_code == 200 and len(res.json()) > 0:
+            chunks = res.json()
+            _CHUNKS_CACHE = chunks
+            _CHUNKS_CACHE_TIME = now
+            return chunks
+    except Exception as e:
+        logger.warning(f"Supabase get_all_chunks failed: {e}")
+
+    return []
