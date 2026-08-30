@@ -76,15 +76,26 @@ def get_db():
         conn = sqlite3.connect(DB_PATH)
         conn.row_factory = sqlite3.Row
         return conn
+
+    db_host = os.getenv("DB_HOST", "localhost")
+    # If explicitly running on Render without remote DB host, default directly to SQLite
+    if os.getenv("RENDER") and (db_host == "localhost" or db_host == "127.0.0.1"):
+        USE_SQLITE = True
+        logger.info("Using embedded SQLite database for portfolio contact submissions.")
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        return conn
+
     try:
         return mysql.connector.connect(
-            host=os.getenv("DB_HOST", "localhost"),
+            host=db_host,
             user=os.getenv("DB_USER", "root"),
             password=os.getenv("DB_PASSWORD", ""),
             database=os.getenv("DB_NAME", "portfolio"),
+            connect_timeout=3,
         )
     except Exception as err:
-        logger.warning("MySQL connection failed (%s). Falling back to local SQLite database.", err)
+        logger.info("MySQL unavailable (%s). Switched to embedded SQLite database.", err)
         USE_SQLITE = True
         conn = sqlite3.connect(DB_PATH)
         conn.row_factory = sqlite3.Row
