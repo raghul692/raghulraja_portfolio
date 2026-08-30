@@ -147,12 +147,12 @@ def health():
 def send_email_notification(submission: ContactSubmission):
     smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com")
     smtp_port = int(os.getenv("SMTP_PORT", "587"))
-    email_user = os.getenv("EMAIL_USER", "")
-    email_password = os.getenv("EMAIL_PASSWORD", "")
-    to_email = os.getenv("TO_EMAIL", "raghulraja2006@gmail.com")
+    email_user = os.getenv("EMAIL_USER", "").strip()
+    email_password = os.getenv("EMAIL_PASSWORD", "").replace(" ", "").strip()
+    to_email = os.getenv("TO_EMAIL", "raghulraja2006@gmail.com").strip()
 
     if not email_user or not email_password:
-        logger.error("EMAIL_USER or EMAIL_PASSWORD is not configured")
+        logger.error("EMAIL_USER or EMAIL_PASSWORD is not configured in backend environment")
         return {"status": "failed", "error": "Email credentials are not configured"}
 
     subject = f"New Contact Form Submission: {submission.subject or 'No Subject'}"
@@ -226,34 +226,51 @@ def send_email_notification(submission: ContactSubmission):
 </body>
 </html>"""
 
+    domain = email_user.split('@')[1] if '@' in email_user else 'gmail.com'
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
     msg["From"] = email_user
     msg["To"] = to_email
-    msg["Message-ID"] = f"<{datetime.utcnow().timestamp()}@{email_user.split('@')[1]}>"
+    msg["Message-ID"] = f"<{datetime.utcnow().timestamp()}@{domain}>"
 
     msg.attach(MIMEText(html_content, "html", "utf-8"))
 
     try:
-        with smtplib.SMTP(smtp_server, smtp_port, timeout=10) as server:
-            server.ehlo()
-            server.starttls()
-            server.ehlo()
-            server.login(email_user, email_password)
-            server.sendmail(email_user, [to_email], msg.as_string())
-        logger.info("Email sent successfully to %s", to_email)
+        if smtp_port == 465:
+            with smtplib.SMTP_SSL(smtp_server, 465, timeout=10) as server:
+                server.login(email_user, email_password)
+                server.sendmail(email_user, [to_email], msg.as_string())
+        else:
+            with smtplib.SMTP(smtp_server, smtp_port, timeout=10) as server:
+                server.ehlo()
+                server.starttls()
+                server.ehlo()
+                server.login(email_user, email_password)
+                server.sendmail(email_user, [to_email], msg.as_string())
+        logger.info("Email notification sent successfully to %s", to_email)
         return {"status": "sent"}
     except Exception as e:
-        logger.error("Failed to send email: %s", e)
-        return {"status": "failed", "error": str(e)}
+        logger.error("Failed to send email notification: %s", e)
+        # Attempt fallback using SMTP_SSL port 465 if STARTTLS on 587 failed
+        try:
+            logger.info("Attempting SMTP_SSL fallback on port 465...")
+            with smtplib.SMTP_SSL(smtp_server, 465, timeout=10) as server:
+                server.login(email_user, email_password)
+                server.sendmail(email_user, [to_email], msg.as_string())
+            logger.info("Fallback email notification sent successfully to %s", to_email)
+            return {"status": "sent"}
+        except Exception as fallback_err:
+            logger.error("Fallback SMTP sending also failed: %s", fallback_err)
+            return {"status": "failed", "error": str(e)}
 
 def send_auto_responder_email(submission: ContactSubmission):
     smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com")
     smtp_port = int(os.getenv("SMTP_PORT", "587"))
-    email_user = os.getenv("EMAIL_USER", "")
-    email_password = os.getenv("EMAIL_PASSWORD", "")
+    email_user = os.getenv("EMAIL_USER", "").strip()
+    email_password = os.getenv("EMAIL_PASSWORD", "").replace(" ", "").strip()
 
     if not email_user or not email_password:
+        logger.warning("Auto-responder skipped: EMAIL_USER or EMAIL_PASSWORD not configured")
         return {"status": "skipped", "reason": "No credentials"}
 
     subject = f"Thank you for contacting Raghul Raja M"
@@ -268,18 +285,26 @@ def send_auto_responder_email(submission: ContactSubmission):
 </body>
 </html>"""
 
+    domain = email_user.split('@')[1] if '@' in email_user else 'gmail.com'
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
     msg["From"] = email_user
     msg["To"] = submission.email
+    msg["Message-ID"] = f"<{datetime.utcnow().timestamp()}-auto@{domain}>"
     msg.attach(MIMEText(html_content, "html", "utf-8"))
 
     try:
-        with smtplib.SMTP(smtp_server, smtp_port, timeout=5) as server:
-            server.ehlo()
-            server.starttls()
-            server.login(email_user, email_password)
-            server.sendmail(email_user, [submission.email], msg.as_string())
+        if smtp_port == 465:
+            with smtplib.SMTP_SSL(smtp_server, 465, timeout=10) as server:
+                server.login(email_user, email_password)
+                server.sendmail(email_user, [submission.email], msg.as_string())
+        else:
+            with smtplib.SMTP(smtp_server, smtp_port, timeout=10) as server:
+                server.ehlo()
+                server.starttls()
+                server.login(email_user, email_password)
+                server.sendmail(email_user, [submission.email], msg.as_string())
+        logger.info("Auto responder email sent to %s", submission.email)
         return {"status": "sent"}
     except Exception as e:
         logger.error("Auto responder failed: %s", e)
