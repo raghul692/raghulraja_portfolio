@@ -158,7 +158,7 @@ export default function PlacementQuizTab() {
   }
 
   return (
-    <div className="flex flex-col h-[560px] bg-surface-darker/70 rounded-xl border border-white/10 p-4 font-sans text-sm overflow-hidden space-y-3">
+    <div className="flex-1 flex flex-col min-h-0 bg-surface-darker/70 rounded-xl border border-white/10 p-3 sm:p-4 font-sans text-xs sm:text-sm overflow-y-auto space-y-3">
       {/* HEADER BAR */}
       <div className="flex flex-wrap items-center justify-between p-3 rounded-xl bg-gradient-to-r from-cyan-500/10 via-primary/10 to-indigo-500/10 border border-cyan-400/20 gap-2">
         <div className="flex items-center gap-2">

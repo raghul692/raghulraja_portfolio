@@ -92,7 +92,7 @@ export default function IEEEResumeBuilderTab() {
   }
 
   return (
-    <div className="flex flex-col h-[560px] bg-surface-darker/80 rounded-xl border border-white/10 p-3 overflow-y-auto space-y-3 font-sans text-xs">
+    <div className="flex-1 flex flex-col min-h-0 bg-surface-darker/80 rounded-xl border border-white/10 p-3 overflow-y-auto space-y-3 font-sans text-xs">
       {/* HEADER BAR */}
       <div className="flex items-center justify-between p-2.5 rounded-xl bg-black/60 border border-white/10">
         <div className="flex items-center gap-2">

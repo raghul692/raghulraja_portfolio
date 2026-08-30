@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Send, Bot, User, Sparkles, ArrowUpRight, Mic, MicOff, Volume2, VolumeX } from 'lucide-react'
+import { Send, Bot, User, Sparkles, ArrowUpRight, Mic, MicOff, Volume2, VolumeX, Loader2 } from 'lucide-react'
 import {
   generatePortfolioAnswerAsync,
   QUICK_SUGGESTIONS_EN,
@@ -146,10 +146,10 @@ export default function AskPortfolioAITab({ lang = 'en' }: AskPortfolioAITabProp
   }
 
   return (
-    <div className="flex flex-col h-[520px] bg-surface-darker/60 rounded-xl border border-white/10 overflow-hidden">
+    <div className="flex-1 flex flex-col min-h-0 bg-surface-darker/60 rounded-xl border border-white/10 overflow-hidden font-sans text-xs sm:text-sm">
       {/* PERSONA SELECTOR & VOICE WAVEBAR HEADER */}
-      <div className="p-2.5 bg-surface-dark/90 border-b border-white/10 flex items-center justify-between gap-2 overflow-x-auto">
-        <div className="flex items-center gap-1.5 overflow-x-auto">
+      <div className="p-2.5 bg-surface-dark/90 border-b border-white/10 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar shrink-0">
+        <div className="flex items-center gap-1.5 overflow-x-auto shrink-0">
           <span className="text-[11px] text-foreground/60 font-semibold font-mono whitespace-nowrap">
             🎭 Recruiter Mode:
           </span>
@@ -162,7 +162,7 @@ export default function AskPortfolioAITab({ lang = 'en' }: AskPortfolioAITabProp
             <button
               key={p.id}
               onClick={() => setPersona(p.id as RecruiterPersona)}
-              className={`text-[11px] px-2 py-0.5 rounded-lg border transition-all cursor-pointer whitespace-nowrap ${
+              className={`text-[11px] px-2 py-1 rounded-lg border transition-all cursor-pointer whitespace-nowrap min-h-[32px] flex items-center ${
                 persona === p.id
                   ? 'bg-primary/20 border-primary text-primary font-bold'
                   : 'bg-white/5 border-white/10 text-foreground/70 hover:bg-white/10'
@@ -174,67 +174,69 @@ export default function AskPortfolioAITab({ lang = 'en' }: AskPortfolioAITabProp
         </div>
 
         {/* VOICE WAVE CANVAS VISUALIZER */}
-        <VoiceWaveVisualizer isActive={isListening || isSpeaking} />
+        <div className="flex items-center gap-2 shrink-0">
+          <VoiceWaveVisualizer isActive={isListening || isSpeaking} />
+          <button
+            onClick={toggleVoicePlayback}
+            className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
+              isSpeaking ? 'bg-cyan-500/20 text-cyan-300 border-cyan-400/40' : 'bg-white/5 text-foreground/60 border-white/10 hover:text-foreground'
+            }`}
+            title="Audio Replay"
+          >
+            {isSpeaking ? <Volume2 className="w-3.5 h-3.5 animate-pulse" /> : <VolumeX className="w-3.5 h-3.5" />}
+          </button>
+        </div>
       </div>
 
       {/* QUICK SUGGESTION CHIPS */}
-      <div className="p-2.5 bg-surface-dark/80 border-b border-white/10 flex items-center justify-between gap-2 overflow-x-auto">
-        <div className="flex items-center gap-2 overflow-x-auto">
-          <span className="text-xs text-primary/80 font-mono flex items-center gap-1 font-semibold whitespace-nowrap">
-            <Sparkles className="w-3 h-3" /> Quick Prompts:
-          </span>
-          {quickSuggestions.map((chip, idx) => (
-            <button
-              key={idx}
-              onClick={() => handleSend(chip)}
-              className="text-[11px] px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-foreground/80 hover:bg-primary/20 hover:text-primary hover:border-primary/40 transition-all cursor-pointer whitespace-nowrap"
-            >
-              {chip}
-            </button>
-          ))}
-        </div>
-
-        <button
-          onClick={toggleVoicePlayback}
-          className={`p-1.5 rounded-lg border text-xs flex items-center gap-1 cursor-pointer transition-all ${
-            isSpeaking ? 'bg-primary/20 border-primary text-primary animate-pulse' : 'bg-white/5 border-white/10 text-foreground/60'
-          }`}
-          title={isSpeaking ? 'Stop AI Voice' : 'Read AI Response Aloud'}
-        >
-          {isSpeaking ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-        </button>
+      <div className="p-2 bg-surface-dark/80 border-b border-white/10 flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0">
+        <span className="text-[11px] text-primary/80 font-mono flex items-center gap-1 font-semibold whitespace-nowrap shrink-0">
+          <Sparkles className="w-3 h-3 text-primary" /> Prompts:
+        </span>
+        {quickSuggestions.map((chip, idx) => (
+          <button
+            key={idx}
+            onClick={() => handleSend(chip)}
+            className="text-[11px] px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-foreground/80 hover:border-primary/40 hover:text-primary hover:bg-primary/10 transition-all font-mono whitespace-nowrap cursor-pointer shrink-0 min-h-[32px] flex items-center"
+          >
+            {chip}
+          </button>
+        ))}
       </div>
 
-      {/* CHAT MESSAGES AREA */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 font-sans text-sm">
+      {/* CHAT MESSAGES LOG */}
+      <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4">
         {messages.map(msg => (
           <div
             key={msg.id}
-            className={`flex gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+            className={`flex items-start gap-2.5 ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
           >
-            {msg.sender === 'bot' && (
-              <div className="w-7 h-7 rounded-lg bg-primary/20 border border-primary/40 flex items-center justify-center text-primary flex-shrink-0">
-                <Bot className="w-4 h-4" />
-              </div>
-            )}
             <div
-              className={`max-w-[80%] rounded-xl p-3 shadow-lg ${
+              className={`w-7 h-7 rounded-xl flex items-center justify-center text-xs shrink-0 ${
                 msg.sender === 'user'
-                  ? 'bg-primary text-black font-medium rounded-tr-none'
-                  : 'bg-surface-dark/90 border border-white/10 text-foreground/90 rounded-tl-none'
+                  ? 'bg-primary text-black font-bold'
+                  : 'bg-gradient-to-br from-cyan-500/20 to-primary/20 text-primary border border-primary/30'
               }`}
             >
-              <div className="whitespace-pre-wrap leading-relaxed text-xs sm:text-sm">
-                {msg.text}
-              </div>
+              {msg.sender === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+            </div>
+
+            <div
+              className={`max-w-[85%] sm:max-w-[78%] p-3 rounded-2xl text-xs sm:text-sm space-y-2 leading-relaxed ${
+                msg.sender === 'user'
+                  ? 'bg-primary/20 text-white border border-primary/30 rounded-tr-none font-sans'
+                  : 'bg-surface-dark border border-white/10 text-foreground/90 rounded-tl-none font-sans'
+              }`}
+            >
+              <div>{msg.text}</div>
 
               {msg.actions && msg.actions.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-2 pt-2 border-t border-white/10">
-                  {msg.actions.map((act, idx) => (
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {msg.actions.map((act, i) => (
                     <button
-                      key={idx}
+                      key={i}
                       onClick={act.action}
-                      className="text-xs px-3 py-1.5 rounded-lg bg-primary/20 text-primary border border-primary/40 hover:bg-primary hover:text-black transition-all flex items-center gap-1 font-semibold cursor-pointer"
+                      className="text-[10px] px-2 py-1 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 transition-all font-bold flex items-center gap-1 cursor-pointer"
                     >
                       {act.label} <ArrowUpRight className="w-3 h-3" />
                     </button>
@@ -242,64 +244,54 @@ export default function AskPortfolioAITab({ lang = 'en' }: AskPortfolioAITabProp
                 </div>
               )}
 
-              <span className={`text-[10px] block mt-1 ${msg.sender === 'user' ? 'text-black/60 text-right' : 'text-foreground/40'}`}>
-                {msg.timestamp}
-              </span>
+              <div className="text-[9px] font-mono text-foreground/50 text-right">{msg.timestamp}</div>
             </div>
-            {msg.sender === 'user' && (
-              <div className="w-7 h-7 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-foreground flex-shrink-0">
-                <User className="w-4 h-4" />
-              </div>
-            )}
           </div>
         ))}
 
         {isTyping && (
-          <div className="flex gap-3 justify-start">
-            <div className="w-7 h-7 rounded-lg bg-primary/20 border border-primary/40 flex items-center justify-center text-primary">
-              <Bot className="w-4 h-4" />
-            </div>
-            <div className="bg-surface-dark/90 border border-white/10 p-3 rounded-xl rounded-tl-none text-xs text-foreground/60 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-primary animate-ping" />
-              Raghul AI is processing response...
-            </div>
+          <div className="flex items-center gap-2 text-foreground/60 text-xs italic p-2">
+            <Loader2 className="w-4 h-4 animate-spin text-primary" />
+            <span>{lang === 'ta' ? 'சிந்தித்துக் கொண்டிருக்கிறது...' : 'Retrieving from Knowledge Engine...'}</span>
           </div>
         )}
+
         <div ref={chatEndRef} />
       </div>
 
-      {/* INPUT FORM WITH MIC BUTTON */}
+      {/* INPUT FORM BAR */}
       <form
         onSubmit={e => {
           e.preventDefault()
           handleSend()
         }}
-        className="p-3 bg-surface-dark border-t border-white/10 flex gap-2 items-center"
+        className="p-2.5 sm:p-3 bg-surface-dark border-t border-white/10 flex items-center gap-2 shrink-0"
       >
         <button
           type="button"
           onClick={toggleMic}
-          className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-center ${
+          className={`p-2.5 rounded-xl border transition-all cursor-pointer min-w-[42px] min-h-[42px] flex items-center justify-center shrink-0 ${
             isListening
-              ? 'bg-red-500/20 border-red-500 text-red-400 animate-pulse'
-              : 'bg-white/5 border-white/10 text-foreground/70 hover:bg-white/10 hover:text-primary'
+              ? 'bg-rose-500/20 text-rose-400 border-rose-400/40 animate-pulse'
+              : 'bg-white/5 text-foreground/60 border-white/10 hover:text-foreground hover:bg-white/10'
           }`}
-          title={isListening ? 'Listening... Speak now' : 'Voice Input (Click to Speak)'}
+          title="Voice Speech Input"
         >
-          {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+          {isListening ? <MicOff className="w-4 h-4 text-rose-400" /> : <Mic className="w-4 h-4" />}
         </button>
 
         <input
           type="text"
           value={input}
           onChange={e => setInput(e.target.value)}
-          placeholder={isListening ? 'Listening to voice...' : (lang === 'ta' ? 'ராகுல் AI இடம் கேளுங்கள்...' : 'Ask Raghul AI about projects, skills, education...')}
-          className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-primary/60 text-xs sm:text-sm"
+          placeholder={lang === 'ta' ? 'ராகுலின் போர்ட்ஃபோலியோ பற்றி கேட்க...' : 'Ask Portfolio AI about projects, skills, internship...'}
+          className="flex-1 px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-foreground text-xs sm:text-sm focus:outline-none focus:border-primary/60 font-sans"
         />
+
         <button
           type="submit"
           disabled={!input.trim()}
-          className="px-4 py-2.5 rounded-xl bg-primary text-black font-semibold hover:bg-primary-light disabled:opacity-40 transition-all flex items-center justify-center cursor-pointer"
+          className="p-2.5 rounded-xl bg-primary text-black hover:bg-primary-light transition-all disabled:opacity-40 disabled:cursor-not-allowed font-bold cursor-pointer shrink-0 min-w-[42px] min-h-[42px] flex items-center justify-center"
         >
           <Send className="w-4 h-4" />
         </button>

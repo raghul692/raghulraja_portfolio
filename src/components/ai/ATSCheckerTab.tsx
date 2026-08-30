@@ -81,7 +81,7 @@ export default function ATSCheckerTab() {
   }
 
   return (
-    <div className="flex flex-col h-[520px] bg-surface-darker/60 rounded-xl border border-white/10 p-4 overflow-y-auto space-y-4 font-sans text-sm">
+    <div className="flex-1 flex flex-col min-h-0 bg-surface-darker/60 rounded-xl border border-white/10 p-3 sm:p-4 overflow-y-auto space-y-4 font-sans text-xs sm:text-sm">
       {!report ? (
         <div className="space-y-4">
           <div className="p-3 rounded-xl bg-primary/10 border border-primary/20 text-xs text-primary flex items-start justify-between gap-2">

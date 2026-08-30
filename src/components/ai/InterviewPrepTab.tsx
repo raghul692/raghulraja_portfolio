@@ -78,7 +78,7 @@ export default function InterviewPrepTab() {
   }
 
   return (
-    <div className="flex flex-col h-[540px] bg-surface-darker/70 rounded-xl border border-white/10 p-4 font-sans text-sm space-y-3 overflow-hidden">
+    <div className="flex-1 flex flex-col min-h-0 bg-surface-darker/70 rounded-xl border border-white/10 p-3 sm:p-4 font-sans text-xs sm:text-sm space-y-3 overflow-y-auto">
       {/* HEADER CONTROLS */}
       <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-emerald-500/10 via-primary/10 to-cyan-500/10 border border-primary/20">
         <div className="flex items-center gap-2">

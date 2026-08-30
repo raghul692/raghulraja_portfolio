@@ -212,17 +212,17 @@ export default function CodePlaygroundTab() {
   ]
 
   return (
-    <div className="flex flex-col h-[560px] bg-surface-darker/80 rounded-xl border border-white/10 p-3 font-sans text-sm overflow-hidden space-y-2.5">
+    <div className="flex-1 flex flex-col min-h-0 bg-surface-darker/80 rounded-xl border border-white/10 p-2 sm:p-3 font-sans text-xs sm:text-sm overflow-hidden space-y-2">
       {/* LEETCODE PRO HEADER NAVBAR */}
-      <div className="flex flex-wrap items-center justify-between p-2.5 rounded-xl bg-black/60 border border-white/10 gap-2">
+      <div className="flex flex-wrap items-center justify-between p-2 rounded-xl bg-black/60 border border-white/10 gap-2">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-black font-black font-mono shadow-md text-xs">
+          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-black font-black font-mono shadow-md text-xs shrink-0">
             LC
           </div>
           <div>
-            <h3 className="font-bold text-white text-xs flex items-center gap-2 font-mono">
-              LeetCode & NeetCode 150 Arena
-              <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono border border-emerald-500/30">
+            <h3 className="font-bold text-white text-xs flex items-center gap-1.5 font-mono">
+              <span>LeetCode Arena</span>
+              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono border border-emerald-500/30">
                 500 Problems
               </span>
             </h3>
@@ -230,23 +230,23 @@ export default function CodePlaygroundTab() {
         </div>
 
         {/* PROBLEM SELECTOR DROPDOWN & PREV/NEXT NAV BUTTONS */}
-        <div className="flex items-center gap-1.5 flex-1 max-w-xl">
+        <div className="flex items-center gap-1 flex-1 max-w-full sm:max-w-xl min-w-0">
           <button
             onClick={handlePrevProblem}
             title="Previous Question"
-            className="p-1 rounded bg-white/5 hover:bg-white/10 border border-white/10 text-white cursor-pointer"
+            className="p-1.5 rounded bg-white/5 hover:bg-white/10 border border-white/10 text-white cursor-pointer min-w-[32px] min-h-[32px] flex items-center justify-center shrink-0"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
 
-          <div className="flex items-center gap-1.5 bg-surface-dark border border-white/15 rounded-lg px-2 py-1 text-xs">
-            <Search className="w-3.5 h-3.5 text-foreground/50" />
+          <div className="flex items-center gap-1 bg-surface-dark border border-white/15 rounded-lg px-2 py-1 text-xs shrink-0">
+            <Search className="w-3.5 h-3.5 text-foreground/50 shrink-0" />
             <input
               type="text"
-              placeholder="Q# or keyword..."
+              placeholder="Q#..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="bg-transparent text-white font-mono text-xs w-24 focus:outline-none placeholder:text-foreground/40"
+              className="bg-transparent text-white font-mono text-xs w-16 sm:w-24 focus:outline-none placeholder:text-foreground/40"
             />
           </div>
 
@@ -256,7 +256,7 @@ export default function CodePlaygroundTab() {
               const p = DSA_50_PROBLEMS.find(item => item.id === Number(e.target.value))
               if (p) handleSelectProblem(p)
             }}
-            className="flex-1 bg-surface-dark border border-white/15 rounded-lg px-2 py-1 text-cyan-300 font-mono text-xs focus:outline-none focus:border-cyan-400 cursor-pointer"
+            className="flex-1 bg-surface-dark border border-white/15 rounded-lg px-2 py-1.5 text-cyan-300 font-mono text-xs focus:outline-none focus:border-cyan-400 cursor-pointer min-w-0 truncate"
           >
             {filteredProblems.map(p => (
               <option key={p.id} value={p.id}>
@@ -268,36 +268,36 @@ export default function CodePlaygroundTab() {
           <button
             onClick={handleNextProblem}
             title="Next Question"
-            className="p-1 rounded bg-white/5 hover:bg-white/10 border border-white/10 text-white cursor-pointer"
+            className="p-1.5 rounded bg-white/5 hover:bg-white/10 border border-white/10 text-white cursor-pointer min-w-[32px] min-h-[32px] flex items-center justify-center shrink-0"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
 
         {/* STATS BADGES */}
-        <div className="flex items-center gap-2 text-xs font-mono">
-          <div className="flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded-lg border border-white/10 text-[11px]">
+        <div className="flex items-center gap-2 text-xs font-mono shrink-0">
+          <div className="flex items-center gap-1 bg-white/5 px-2 py-1 rounded-lg border border-white/10 text-[11px]">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="text-foreground/70">Solved:</span>
-            <span className="text-emerald-400 font-bold">{solvedCount} / {DSA_50_PROBLEMS.length}</span>
+            <span className="text-foreground/70 hidden xs:inline">Solved:</span>
+            <span className="text-emerald-400 font-bold">{solvedCount}/{DSA_50_PROBLEMS.length}</span>
           </div>
 
           <div className="flex items-center gap-1 bg-amber-500/10 px-2 py-1 rounded-lg border border-amber-500/20 text-[11px] text-amber-300 font-bold">
             <Flame className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-            <span>Streak: 7 Days</span>
+            <span>7 Days</span>
           </div>
         </div>
       </div>
 
-      {/* FILTER CONTROLS BAR */}
-      <div className="flex items-center justify-between text-xs px-1 text-foreground/70">
-        <div className="flex items-center gap-2">
-          <span className="text-[11px] font-semibold">Category:</span>
+      {/* FILTER CONTROLS BAR (SCROLLABLE ON MOBILE) */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs gap-1.5 text-foreground/70 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 whitespace-nowrap">
+          <span className="text-[11px] font-semibold shrink-0">Cat:</span>
           {['All', 'Arrays', 'Strings', 'Linked Lists', 'Trees', 'Graphs', 'Dynamic Programming', 'SQL', 'System Algorithms'].map(cat => (
             <button
               key={cat}
               onClick={() => handleSetCategory(cat)}
-              className={`px-2 py-0.5 rounded-md text-[11px] font-medium cursor-pointer transition-all ${
+              className={`px-2 py-1 rounded-md text-[11px] font-medium cursor-pointer transition-all shrink-0 min-h-[28px] ${
                 filterCategory === cat ? 'bg-primary text-black font-bold' : 'bg-white/5 hover:bg-white/10'
               }`}
             >
@@ -306,13 +306,13 @@ export default function CodePlaygroundTab() {
           ))}
         </div>
 
-        <div className="flex items-center gap-1">
-          <span className="text-[11px] font-semibold">Diff:</span>
+        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5 whitespace-nowrap shrink-0">
+          <span className="text-[11px] font-semibold shrink-0">Diff:</span>
           {['All', 'Easy', 'Medium', 'Hard', 'Advanced'].map(diff => (
             <button
               key={diff}
               onClick={() => handleSetDifficulty(diff)}
-              className={`px-2 py-0.5 rounded-md text-[11px] font-medium cursor-pointer transition-all ${
+              className={`px-2 py-1 rounded-md text-[11px] font-medium cursor-pointer transition-all shrink-0 min-h-[28px] ${
                 filterDifficulty === diff
                   ? diff === 'Easy' ? 'bg-emerald-500 text-black font-bold'
                     : diff === 'Medium' ? 'bg-amber-500 text-black font-bold'
@@ -329,7 +329,7 @@ export default function CodePlaygroundTab() {
       </div>
 
       {/* MAIN SPLIT WORKSPACE: LEFT PROBLEM PANE | RIGHT CODE EDITOR & CONSOLE */}
-      <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-2.5 min-h-0">
+      <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-2 min-h-0 overflow-y-auto md:overflow-hidden">
         
         {/* LEFT PANEL (COL 5): PROBLEM DESCRIPTION & EDITORIAL */}
         <div className="md:col-span-5 flex flex-col bg-black/70 rounded-xl border border-white/10 overflow-hidden">
