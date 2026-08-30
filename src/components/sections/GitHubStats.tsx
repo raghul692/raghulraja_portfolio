@@ -180,22 +180,22 @@ export default function GitHubStats() {
   }, [])
 
   return (
-    <div className="glass rounded-2xl p-6 border border-glass-border space-y-6">
+    <div className="glass rounded-2xl p-4 sm:p-6 border border-glass-border space-y-4 sm:space-y-6 w-full overflow-hidden">
       {/* HEADER BAR */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-primary/10 text-primary border border-primary/20">
-            <Github className="w-6 h-6" />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="p-2 sm:p-2.5 rounded-xl bg-primary/10 text-primary border border-primary/20 shrink-0">
+            <Github className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
-          <div>
-            <h4 className="font-heading font-bold text-lg flex items-center gap-2">
+          <div className="min-w-0">
+            <h4 className="font-heading font-bold text-base sm:text-lg flex items-center gap-2 truncate">
               Live GitHub REST API Sync
-              <span className="relative flex h-2 w-2">
+              <span className="relative flex h-2 w-2 shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
               </span>
             </h4>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-[11px] sm:text-xs text-muted-foreground truncate">
               {error ? 'Showing cached metrics snapshot' : 'Real-time repository telemetry synced from @raghul692'}
             </p>
           </div>
@@ -204,52 +204,52 @@ export default function GitHubStats() {
         <button
           onClick={fetchGitHubData}
           disabled={loading}
-          className="p-2.5 rounded-xl glass hover:bg-white/10 text-muted-foreground hover:text-foreground transition-all flex items-center gap-1.5 text-xs font-mono border border-white/10 cursor-pointer"
+          className="self-start sm:self-auto p-2 sm:p-2.5 rounded-xl glass hover:bg-white/10 text-muted-foreground hover:text-foreground transition-all flex items-center gap-1.5 text-xs font-mono border border-white/10 cursor-pointer shrink-0"
           title="Sync Live GitHub Data"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-primary' : ''}`} />
-          <span className="hidden sm:inline">{loading ? 'Syncing...' : 'Sync Live'}</span>
+          <span>{loading ? 'Syncing...' : 'Sync Live'}</span>
         </button>
       </div>
 
       {/* METRICS CARDS GRID */}
       {stats && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="glass rounded-xl p-4 text-center border border-white/10 hover:border-primary/40 transition-all">
-            <BookOpen className="w-4 h-4 text-primary mx-auto mb-1.5" />
-            <span className="text-2xl font-bold font-mono tracking-tight text-foreground">{stats.public_repos}</span>
-            <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider mt-0.5">Repositories</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+          <div className="glass rounded-xl p-2.5 sm:p-4 text-center border border-white/10 hover:border-primary/40 transition-all min-w-0">
+            <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary mx-auto mb-1" />
+            <span className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-foreground block truncate">{stats.public_repos}</span>
+            <p className="text-[10px] sm:text-[11px] text-muted-foreground font-medium uppercase tracking-wider mt-0.5 truncate">Repositories</p>
           </div>
-          <div className="glass rounded-xl p-4 text-center border border-white/10 hover:border-amber-400/40 transition-all">
-            <Star className="w-4 h-4 text-amber-400 mx-auto mb-1.5" />
-            <span className="text-2xl font-bold font-mono tracking-tight text-foreground">{stats.total_stars}</span>
-            <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider mt-0.5">Stars Earned</p>
+          <div className="glass rounded-xl p-2.5 sm:p-4 text-center border border-white/10 hover:border-amber-400/40 transition-all min-w-0">
+            <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 mx-auto mb-1" />
+            <span className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-foreground block truncate">{stats.total_stars}</span>
+            <p className="text-[10px] sm:text-[11px] text-muted-foreground font-medium uppercase tracking-wider mt-0.5 truncate">Stars Earned</p>
           </div>
-          <div className="glass rounded-xl p-4 text-center border border-white/10 hover:border-cyan-400/40 transition-all">
-            <GitFork className="w-4 h-4 text-cyan-400 mx-auto mb-1.5" />
-            <span className="text-2xl font-bold font-mono tracking-tight text-foreground">{stats.total_forks}</span>
-            <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider mt-0.5">Forks</p>
+          <div className="glass rounded-xl p-2.5 sm:p-4 text-center border border-white/10 hover:border-cyan-400/40 transition-all min-w-0">
+            <GitFork className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-400 mx-auto mb-1" />
+            <span className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-foreground block truncate">{stats.total_forks}</span>
+            <p className="text-[10px] sm:text-[11px] text-muted-foreground font-medium uppercase tracking-wider mt-0.5 truncate">Forks</p>
           </div>
-          <div className="glass rounded-xl p-4 text-center border border-white/10 hover:border-purple-400/40 transition-all">
-            <Users className="w-4 h-4 text-purple-400 mx-auto mb-1.5" />
-            <span className="text-2xl font-bold font-mono tracking-tight text-foreground">{stats.followers}</span>
-            <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider mt-0.5">Followers</p>
+          <div className="glass rounded-xl p-2.5 sm:p-4 text-center border border-white/10 hover:border-purple-400/40 transition-all min-w-0">
+            <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-400 mx-auto mb-1" />
+            <span className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-foreground block truncate">{stats.followers}</span>
+            <p className="text-[10px] sm:text-[11px] text-muted-foreground font-medium uppercase tracking-wider mt-0.5 truncate">Followers</p>
           </div>
         </div>
       )}
 
       {/* TOP LANGUAGES DISTRIBUTION */}
       {stats && stats.languages && stats.languages.length > 0 && (
-        <div className="space-y-3 glass p-4 rounded-xl border border-white/5">
-          <div className="flex items-center justify-between text-xs">
+        <div className="space-y-2.5 sm:space-y-3 glass p-3 sm:p-4 rounded-xl border border-white/5 min-w-0">
+          <div className="flex flex-wrap items-center justify-between text-xs gap-1">
             <span className="font-semibold text-foreground flex items-center gap-1.5">
-              <Layers className="w-4 h-4 text-primary" /> Languages Distribution
+              <Layers className="w-3.5 h-3.5 text-primary" /> Languages Distribution
             </span>
-            <span className="text-muted-foreground font-mono text-[11px]">Primary: {stats.languages[0]?.language}</span>
+            <span className="text-muted-foreground font-mono text-[10px] sm:text-[11px]">Primary: {stats.languages[0]?.language}</span>
           </div>
 
           {/* DYNAMIC STACK BAR */}
-          <div className="h-2.5 w-full bg-white/5 rounded-full overflow-hidden flex">
+          <div className="h-2 sm:h-2.5 w-full bg-white/5 rounded-full overflow-hidden flex">
             {stats.languages.map((langItem) => (
               <div
                 key={langItem.language}
@@ -264,11 +264,11 @@ export default function GitHubStats() {
           </div>
 
           {/* LEGEND BADGES */}
-          <div className="flex flex-wrap gap-2 pt-1">
+          <div className="flex flex-wrap gap-x-3 gap-y-1.5 pt-1">
             {stats.languages.map((langItem) => (
-              <div key={langItem.language} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <div key={langItem.language} className="flex items-center gap-1 text-[11px] sm:text-xs text-muted-foreground">
                 <span
-                  className="w-2.5 h-2.5 rounded-full inline-block"
+                  className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full inline-block shrink-0"
                   style={{ backgroundColor: LANGUAGE_COLORS[langItem.language] || '#6366f1' }}
                 />
                 <span className="font-mono text-foreground font-medium">{langItem.language}</span>
@@ -281,49 +281,49 @@ export default function GitHubStats() {
 
       {/* FEATURED LIVE REPOSITORIES GRID */}
       {stats && stats.top_repos && stats.top_repos.length > 0 && (
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        <div className="space-y-2.5 sm:space-y-3 min-w-0">
+          <div className="flex items-center justify-between text-xs">
+            <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Featured Live Repositories
             </p>
-            <span className="text-[11px] text-primary/80 font-mono">Live Sync</span>
+            <span className="text-[10px] sm:text-[11px] text-primary/80 font-mono">Live Sync</span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
             {stats.top_repos.map((repo) => (
               <a
                 key={repo.id}
                 href={repo.html_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group glass p-4 rounded-xl border border-white/10 hover:border-primary/50 transition-all hover:bg-white/[0.04] flex flex-col justify-between"
+                className="group glass p-3 sm:p-4 rounded-xl border border-white/10 hover:border-primary/50 transition-all hover:bg-white/[0.04] flex flex-col justify-between min-w-0"
               >
                 <div>
-                  <div className="flex items-center justify-between gap-2 mb-2">
-                    <h5 className="font-mono text-sm font-bold text-foreground group-hover:text-primary transition-colors truncate">
+                  <div className="flex items-center justify-between gap-2 mb-1.5">
+                    <h5 className="font-mono text-xs sm:text-sm font-bold text-foreground group-hover:text-primary transition-colors truncate">
                       {repo.name}
                     </h5>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 border border-white/10 font-mono text-muted-foreground flex items-center gap-1">
+                    <span className="text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full bg-white/5 border border-white/10 font-mono text-muted-foreground flex items-center gap-1 shrink-0">
                       <span
-                        className="w-1.5 h-1.5 rounded-full"
+                        className="w-1.5 h-1.5 rounded-full shrink-0"
                         style={{ backgroundColor: LANGUAGE_COLORS[repo.language] || '#6366f1' }}
                       />
                       {repo.language}
                     </span>
                   </div>
-                  <p className="text-xs text-muted-foreground line-clamp-2 mb-3">{repo.description}</p>
+                  <p className="text-[11px] sm:text-xs text-muted-foreground line-clamp-2 mb-2.5 leading-relaxed">{repo.description}</p>
                 </div>
 
                 <div className="flex items-center justify-between text-xs pt-2 border-t border-white/5 text-muted-foreground font-mono">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2.5 text-[11px]">
                     <span className="flex items-center gap-1 hover:text-amber-400">
-                      <Star className="w-3.5 h-3.5 text-amber-400" /> {repo.stars}
+                      <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" /> {repo.stars}
                     </span>
                     <span className="flex items-center gap-1 hover:text-cyan-400">
-                      <GitFork className="w-3.5 h-3.5 text-cyan-400" /> {repo.forks}
+                      <GitFork className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-cyan-400" /> {repo.forks}
                     </span>
                   </div>
-                  <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform text-primary" />
+                  <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform text-primary shrink-0" />
                 </div>
               </a>
             ))}
@@ -332,8 +332,8 @@ export default function GitHubStats() {
       )}
 
       {/* FOOTER LINK & STATUS */}
-      <div className="pt-2 flex items-center justify-between text-xs border-t border-white/5">
-        <span className="text-[11px] text-muted-foreground font-mono">
+      <div className="pt-2 flex flex-wrap items-center justify-between gap-2 text-xs border-t border-white/5">
+        <span className="text-[10px] sm:text-[11px] text-muted-foreground font-mono">
           {stats?.cached_at ? `Synced: ${stats.cached_at}` : 'Live Connected'}
         </span>
         <a

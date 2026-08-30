@@ -41,13 +41,10 @@ import {
   Search,
   Share2,
   Check,
-  Box,
-  Layers,
   Zap,
 } from 'lucide-react'
 import { ProjectArchitectureFlow } from '@/components/ui/ProjectArchitectureFlow'
 import { ProjectDemoSandboxModal } from '@/components/ui/ProjectDemoSandboxModal'
-import { ProjectCylinderCarousel3D } from '@/components/three/ProjectCylinderCarousel3D'
 import soundEngine from '@/utils/soundEngine'
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -142,7 +139,6 @@ export default function Projects() {
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [copiedId, setCopiedId] = useState<string | null>(null)
-  const [viewMode, setViewMode] = useState<'2d' | '3d'>('2d')
   const [demoSandboxState, setDemoSandboxState] = useState<{ title: string; id: string } | null>(null)
 
   const filteredProjects = useMemo(() => {
@@ -199,40 +195,6 @@ export default function Projects() {
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             A showcase of full-stack platforms, machine learning systems, & security engines with interactive architecture flowcharts & live AI demo sandboxes.
           </p>
-
-          {/* VIEW MODE TOGGLE (2D Grid vs 3D Cylinder Ring) */}
-          <div className="mt-8 flex justify-center">
-            <div className="inline-flex items-center p-1.5 rounded-2xl glass border border-glass-border space-x-1 shadow-xl">
-              <button
-                onClick={() => {
-                  soundEngine.playClickSound()
-                  setViewMode('2d')
-                }}
-                className={cn(
-                  'px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-1.5 cursor-pointer',
-                  viewMode === '2d'
-                    ? 'bg-primary text-white shadow-glow'
-                    : 'text-muted-foreground hover:text-white'
-                )}
-              >
-                <Layers className="w-4 h-4" /> 2D Grid View
-              </button>
-              <button
-                onClick={() => {
-                  soundEngine.playClickSound()
-                  setViewMode('3d')
-                }}
-                className={cn(
-                  'px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-1.5 cursor-pointer',
-                  viewMode === '3d'
-                    ? 'bg-gradient-to-r from-cyan-500 to-indigo-500 text-white shadow-glow'
-                    : 'text-muted-foreground hover:text-white'
-                )}
-              >
-                <Box className="w-4 h-4 text-cyan-300 animate-bounce" /> 🎮 3D Cyber Ring
-              </button>
-            </div>
-          </div>
         </motion.div>
 
         {/* Interactive Search Bar */}
@@ -284,22 +246,8 @@ export default function Projects() {
           ))}
         </div>
 
-        {/* 3D CYLINDER CAROUSEL VIEW */}
-        {viewMode === '3d' ? (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4 }}
-          >
-            <ProjectCylinderCarousel3D
-              projects={filteredProjects}
-              onSelectProject={(p) => setSelectedProject(p)}
-              onOpenDemo={(p) => setDemoSandboxState({ title: p.title, id: p.id })}
-            />
-          </motion.div>
-        ) : (
-          /* 2D GRID VIEW */
-          filteredProjects.length === 0 ? (
+        {/* PROJECTS GRID VIEW */}
+        {filteredProjects.length === 0 ? (
             <div className="text-center py-16 glass rounded-3xl border border-glass-border max-w-lg mx-auto">
               <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
               <h3 className="font-heading font-semibold text-lg text-foreground mb-1">No Projects Found</h3>
@@ -438,8 +386,7 @@ export default function Projects() {
                 })}
               </AnimatePresence>
             </motion.div>
-          )
-        )}
+          )}
       </div>
 
       {/* PROJECT DETAILS & ARCHITECTURE MODAL */}

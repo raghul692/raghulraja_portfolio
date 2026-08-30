@@ -260,11 +260,12 @@ export default function About() {
         <SkillMatrix />
 
         {/* Dynamic Additions: Live GitHub Stats & Tech Code Architecture Playground */}
-        <div className="mt-16 grid lg:grid-cols-2 gap-8">
+        <div className="mt-10 sm:mt-16 grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 w-full min-w-0">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            className="w-full min-w-0"
           >
             <GitHubStats />
           </motion.div>
@@ -274,6 +275,7 @@ export default function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
+            className="w-full min-w-0"
           >
             <TechPlayground />
           </motion.div>
