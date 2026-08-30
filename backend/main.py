@@ -135,6 +135,15 @@ def init_db():
 def startup():
     init_db()
 
+@app.get("/")
+def root():
+    return {
+        "status": "online",
+        "message": "Portfolio AI System & Developer API is running",
+        "documentation": "/docs",
+        "health": "/api/health"
+    }
+
 @app.get("/api/health")
 def health():
     return {
