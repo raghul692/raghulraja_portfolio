@@ -629,6 +629,7 @@ export const techStack: TechItem[] = [
 ]
 
 export const navLinks: NavLink[] = [
+  { name: 'Home', href: '#hero' },
   { name: 'About', href: '#about' },
   { name: 'Experience', href: '#experience' },
   { name: 'Projects', href: '#projects' },
