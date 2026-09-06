@@ -20,11 +20,21 @@ def get_connection_pool() -> ThreadedConnectionPool:
     global _pool
     if _pool is None or _pool.closed:
         try:
-            logger.info("Initializing PostgreSQL Connection Pool with DATABASE_URL...")
+            logger.info("Initializing PostgreSQL Connection Pool...")
+            dsn = settings.DATABASE_URL
+            # Fallback if dsn is empty, missing password (e.g. '://user:@' or '://user@'), or invalid
+            if not dsn or ":@" in dsn or "@" not in dsn:
+                pwd = settings.SUPABASE_DB_PASSWORD or "raghulraja2006"
+                user = settings.SUPABASE_DB_USER or "postgres.brmafvpjvdgieelcgivi"
+                host = settings.SUPABASE_DB_HOST or "aws-0-ap-south-1.pooler.supabase.com"
+                port = settings.SUPABASE_DB_PORT or 5432
+                dbname = settings.SUPABASE_DB_NAME or "postgres"
+                dsn = f"postgresql://{user}:{pwd}@{host}:{port}/{dbname}?sslmode=require"
+
             _pool = ThreadedConnectionPool(
                 minconn=1,
                 maxconn=10,
-                dsn=settings.DATABASE_URL,
+                dsn=dsn,
                 connect_timeout=10
             )
             logger.info("PostgreSQL Connection Pool successfully initialized.")
