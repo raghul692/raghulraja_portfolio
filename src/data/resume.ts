@@ -102,12 +102,12 @@ export const resume: ResumeData = {
   },
   summary: 'Full Stack Developer specializing in React, TypeScript, Node.js, and AI/ML. Experienced in building scalable web applications, designing intuitive user experiences, and developing intelligent systems with Python. Passionate about solving complex problems and shipping high-quality software that bridges engineering, design, and artificial intelligence.',
   skills: {
-    frontend: ['React.js', 'HTML5', 'CSS3', 'JavaScript', 'Tailwind CSS', 'Responsive Web Design'],
-    backend: ['Node.js', 'Express.js', 'REST API Development', 'JWT Authentication'],
-    database: ['MySQL', 'PostgreSQL', 'Database Design', 'SQL Queries'],
-    ai: ['Python', 'Scikit-Learn', 'Pandas', 'NumPy', 'Machine Learning', 'OpenAI API', 'Streamlit'],
-    design: ['Figma', 'UI/UX Design', 'Wireframing', 'Prototyping', 'User Research'],
-    tools: ['Git', 'GitHub', 'VS Code', 'Vercel', 'Postman', 'npm'],
+    frontend: ['React.js', 'TypeScript', 'HTML5', 'CSS3', 'Tailwind CSS', 'Framer Motion', 'Responsive Web Design'],
+    backend: ['FastAPI (Python)', 'Node.js', 'Express.js', 'REST API Architecture', 'JWT Authentication'],
+    database: ['Supabase PostgreSQL 17', 'pgvector (Vector Search)', 'Database Design', 'Connection Pooling'],
+    ai: ['Python', 'Scikit-Learn', 'Pandas', 'NumPy', 'Machine Learning', 'Gemini AI API', 'Streamlit'],
+    design: ['Figma', 'UI/UX Design', 'Wireframing', 'Prototyping', 'Design Systems'],
+    tools: ['Git', 'GitHub', 'Resend API', 'Vercel', 'Render', 'Postman', 'VS Code'],
   },
   education: [
     {

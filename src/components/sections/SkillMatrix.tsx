@@ -45,11 +45,11 @@ const skillCategories: SkillCategory[] = [
     name: 'Backend & Databases',
     icon: Database,
     skills: [
-      { name: 'Node.js & Express', level: 85, experience: 'Proficient' },
-      { name: 'FastAPI (Python)', level: 88, experience: 'Advanced' },
-      { name: 'MySQL & SQLite Schemas', level: 85, experience: 'Proficient' },
-      { name: 'RESTful API Architecture', level: 90, experience: 'Advanced' },
-      { name: 'JWT & Auth Systems', level: 82, experience: 'Proficient' },
+      { name: 'FastAPI (Python)', level: 90, experience: 'Advanced' },
+      { name: 'Supabase PostgreSQL 17 (pgvector)', level: 92, experience: 'Advanced' },
+      { name: 'Resend REST API Integration', level: 88, experience: 'Advanced' },
+      { name: 'Node.js & Express REST APIs', level: 85, experience: 'Proficient' },
+      { name: 'JWT & Modern Auth Systems', level: 84, experience: 'Proficient' },
     ],
   },
   {
@@ -72,17 +72,22 @@ const allGalaxySkills: SkillNodeData[] = [
   { id: 'streamlit', name: 'Streamlit', category: 'ai', level: 90, experience: 'Advanced', color: '#a5b4fc', projects: ['ResuMate Web App', 'AI Dashboard'] },
   { id: 'react', name: 'React.js', category: 'frontend', level: 90, experience: 'Advanced', color: '#06b6d4', projects: ['Portfolio Website', 'AuthPro System', 'ATS Dashboard'] },
   { id: 'typescript', name: 'TypeScript', category: 'frontend', level: 85, experience: 'Proficient', color: '#38bdf8', projects: ['Portfolio UI', 'Enterprise ATS UI'] },
-  { id: 'tailwind', name: 'Tailwind CSS', category: 'frontend', level: 92, experience: 'Advanced', color: '#22d3ee', projects: ['Design System', 'Glassmorphic UI'] },
+  { id: 'tailwind', name: 'Tailwind CSS', level: 92, category: 'frontend', experience: 'Advanced', color: '#22d3ee', projects: ['Design System', 'Glassmorphic UI'] },
+  { id: 'fastapi', name: 'FastAPI', category: 'backend', level: 90, experience: 'Advanced', color: '#10b981', projects: ['Portfolio AI Routers', 'GitHub Live Sync API'] },
+  { id: 'supabase', name: 'Supabase + pgvector', category: 'backend', level: 92, experience: 'Advanced', color: '#34d399', projects: ['PostgreSQL Database', 'HNSW Vector Search'] },
+  { id: 'resend', name: 'Resend API', category: 'backend', level: 88, experience: 'Advanced', color: '#6ee7b7', projects: ['Contact Email Delivery', 'Instant Notifications'] },
   { id: 'threejs', name: 'Three.js / 3D', category: 'frontend', level: 80, experience: 'Competent', color: '#67e8f9', projects: ['3D Galaxy Skill Radar', 'Particle Canvas'] },
-  { id: 'fastapi', name: 'FastAPI', category: 'backend', level: 88, experience: 'Advanced', color: '#10b981', projects: ['Portfolio AI Routers', 'GitHub Live Sync API'] },
-  { id: 'node', name: 'Node.js', category: 'backend', level: 85, experience: 'Proficient', color: '#34d399', projects: ['Express Microservices', 'Auth API'] },
-  { id: 'mysql', name: 'MySQL & SQLite', category: 'backend', level: 85, experience: 'Proficient', color: '#6ee7b7', projects: ['Portfolio DB Schema', 'Contact Submissions'] },
   { id: 'figma', name: 'Figma Design', category: 'uiux', level: 88, experience: 'Advanced', color: '#f43f5e', projects: ['ResuMate SaaS Wireframes', 'Portfolio Design System'] },
   { id: 'git', name: 'Git & GitHub', category: 'uiux', level: 90, experience: 'Advanced', color: '#fb7185', projects: ['Portfolio CI/CD', 'GitHub Auto-Sync'] },
 ]
 
 export default function SkillMatrix() {
-  const [viewMode, setViewMode] = useState<'3d' | '2d'>('3d')
+  const [viewMode, setViewMode] = useState<'3d' | '2d'>(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      return '2d'
+    }
+    return '3d'
+  })
   const [activeTab, setActiveTab] = useState<string>('ai')
   const [selectedGalaxySkill, setSelectedGalaxySkill] = useState<SkillNodeData | null>(allGalaxySkills[0])
 

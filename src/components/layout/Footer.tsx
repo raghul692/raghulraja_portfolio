@@ -62,7 +62,7 @@ export default function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-3 rounded-xl glass border-glass-border text-muted-foreground hover:text-foreground hover:border-glass-borderHover transition-all hover:shadow-glass group"
+                  className="p-3 rounded-xl glass border-glass-border text-muted-foreground hover:text-foreground hover:border-glass-borderHover transition-all hover:shadow-glass group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface-dark"
                   aria-label={social.label}
                 >
                   <social.icon className="w-5 h-5" />
@@ -78,7 +78,7 @@ export default function Footer() {
                 <li key={link.href}>
                   <a
                     href={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2 group"
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2 group rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   >
                     <span className="w-1 h-1 rounded-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                     {link.label}

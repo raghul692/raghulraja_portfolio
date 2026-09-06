@@ -8,22 +8,19 @@ export function CustomCursor() {
   const [isPointer, setIsPointer] = useState(false)
 
   useEffect(() => {
+    // Disable custom cursor on touch/mobile devices
+    if (window.matchMedia('(pointer: coarse)').matches) return
+
     const move = (e: MouseEvent) => {
       setPosition({ x: e.clientX, y: e.clientY })
+      const target = e.target as HTMLElement | null
+      const isInteractive = Boolean(target?.closest('a, button, [role="button"], input, textarea, select, label'))
+      setIsPointer(isInteractive)
     }
 
-    const checkPointer = () => {
-      const hovered = document.querySelectorAll('a, button, [role="button"]')
-      const found = Array.from(hovered).some(el => el.matches(':hover'))
-      setIsPointer(found)
-    }
-
-    window.addEventListener('mousemove', move)
-    window.addEventListener('mouseover', checkPointer)
-
+    window.addEventListener('mousemove', move, { passive: true })
     return () => {
       window.removeEventListener('mousemove', move)
-      window.removeEventListener('mouseover', checkPointer)
     }
   }, [])
 

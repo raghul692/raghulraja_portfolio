@@ -79,12 +79,12 @@ export default function Navbar() {
             onClick={handleSoundToggle}
             onMouseEnter={() => soundEngine.playHoverSound()}
             className={cn(
-              "p-2 rounded-xl transition-all duration-300 relative group flex items-center gap-1.5 text-xs font-mono",
+              "p-2 rounded-xl transition-all duration-300 relative group flex items-center gap-1.5 text-xs font-mono focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
               isMuted
                 ? "glass text-muted-foreground hover:text-foreground"
                 : "glass-spatial text-cyan-400 border-cyan-500/30 shadow-[0_0_10px_rgba(34,211,238,0.2)]"
             )}
-            aria-label="Toggle Spatial Sound Effects"
+            aria-label={isMuted ? "Unmute Spatial Sound Effects" : "Mute Spatial Sound Effects"}
             title={isMuted ? "Unmute Sci-Fi Spatial UI Audio" : "Mute Spatial UI Audio"}
           >
             {isMuted ? (
@@ -103,7 +103,7 @@ export default function Navbar() {
               toggleTheme()
             }}
             onMouseEnter={() => soundEngine.playHoverSound()}
-            className="p-2 rounded-xl glass glass-hover text-muted-foreground hover:text-foreground"
+            className="p-2 rounded-xl glass glass-hover text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             aria-label="Toggle theme"
           >
             {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -114,8 +114,9 @@ export default function Navbar() {
               soundEngine.playClickSound()
               setMobileOpen(!mobileOpen)
             }}
-            className="md:hidden p-2 rounded-xl glass glass-hover"
-            aria-label="Toggle menu"
+            className="md:hidden p-2 rounded-xl glass glass-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
           >
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>

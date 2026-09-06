@@ -10,13 +10,22 @@ export default defineConfig({
     },
   },
   build: {
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor': ['react', 'react-dom', 'react-router-dom'],
-          'three': ['three', '@react-three/fiber', '@react-three/drei'],
-          'motion': ['framer-motion', 'gsap'],
-          'utils': ['clsx', 'tailwind-merge', 'class-variance-authority'],
+        manualChunks(id) {
+          if (id.includes('node_modules/three') || id.includes('node_modules/@react-three')) {
+            return 'three-vendor'
+          }
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router-dom')) {
+            return 'react-vendor'
+          }
+          if (id.includes('node_modules/framer-motion') || id.includes('node_modules/gsap') || id.includes('node_modules/lenis')) {
+            return 'motion-vendor'
+          }
+          if (id.includes('node_modules/clsx') || id.includes('node_modules/tailwind-merge') || id.includes('node_modules/class-variance-authority')) {
+            return 'utils-vendor'
+          }
         },
       },
     },

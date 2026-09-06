@@ -2,12 +2,12 @@
 
 class SoundEngine {
   private ctx: AudioContext | null = null
-  private isMuted: boolean = false
+  private isMuted: boolean = true
 
   constructor() {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('portfolio_sound_enabled')
-      this.isMuted = saved === 'false'
+      this.isMuted = saved !== 'true'
     }
   }
 
