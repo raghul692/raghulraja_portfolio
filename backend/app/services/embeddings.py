@@ -16,7 +16,7 @@ def generate_embedding(text: str) -> list[float]:
     if settings.GEMINI_API_KEY:
         try:
             result = genai.embed_content(
-                model="models/gemini-embedding-001",
+                model="models/text-embedding-004",
                 content=text,
                 task_type="retrieval_document"
             )
@@ -24,7 +24,18 @@ def generate_embedding(text: str) -> list[float]:
             if embedding:
                 return embedding
         except Exception as e:
-            logger.warning(f"Gemini embedding error: {e}. Falling back to deterministic embedding.")
+            try:
+                result = genai.embed_content(
+                    model="models/embedding-001",
+                    content=text,
+                    task_type="retrieval_document"
+                )
+                embedding = result.get("embedding", [])
+                if embedding:
+                    return embedding
+            except Exception:
+                logger.warning(f"Gemini embedding error: {e}. Falling back to deterministic embedding.")
+
 
     # Deterministic local fallback embedding generator (768 dimensions)
     return compute_local_hash_embedding(text, dim=768)

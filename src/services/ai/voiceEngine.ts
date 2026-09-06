@@ -63,22 +63,20 @@ export function createSpeechRecognizer(
     return null
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognition = new (SpeechRecognition as any)()
   recognition.continuous = false
   recognition.interimResults = false
   recognition.lang = lang === 'ta' ? 'ta-IN' : 'en-US'
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   recognition.onresult = (event: any) => {
     const transcript = event.results[0][0].transcript
     onResult(transcript)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   recognition.onerror = (event: any) => {
     onError(event.error || 'Voice input error')
   }
+
 
   recognition.onend = () => {
     onEnd()

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { Bot, Sparkles } from 'lucide-react'
 import Navbar from '@/components/layout/Navbar'
@@ -11,12 +11,16 @@ import Projects from '@/components/sections/Projects'
 import Experience from '@/components/sections/Experience'
 import Certificates from '@/components/sections/Certificates'
 import Contact from '@/components/sections/Contact'
-import { CommandPalette } from '@/components/animations/CommandPalette'
 import { ScrollProgress } from '@/components/animations/ScrollProgress'
 import { CustomCursor } from '@/components/animations/CustomCursor'
 import Education from '@/components/sections/Education'
-import PortfolioAIHub from '@/components/ai/PortfolioAIHub'
 import { ToastContainer } from '@/components/ui/ToastNotification'
+
+const CommandPalette = lazy(() =>
+  import('@/components/animations/CommandPalette').then(mod => ({ default: mod.CommandPalette }))
+)
+const PortfolioAIHub = lazy(() => import('@/components/ai/PortfolioAIHub'))
+
 
 export default function App() {
   const [commandOpen, setCommandOpen] = useState(false)
@@ -65,16 +69,23 @@ export default function App() {
       </button>
 
       {/* PORTFOLIO AI MODAL HUB */}
-      <PortfolioAIHub isOpen={aiHubOpen} onClose={() => setAiHubOpen(false)} />
+      {aiHubOpen && (
+        <Suspense fallback={null}>
+          <PortfolioAIHub isOpen={aiHubOpen} onClose={() => setAiHubOpen(false)} />
+        </Suspense>
+      )}
 
       <AnimatePresence>
         {commandOpen && (
-          <CommandPalette
-            onClose={() => setCommandOpen(false)}
-            onOpenAiHub={() => setAiHubOpen(true)}
-          />
+          <Suspense fallback={null}>
+            <CommandPalette
+              onClose={() => setCommandOpen(false)}
+              onOpenAiHub={() => setAiHubOpen(true)}
+            />
+          </Suspense>
         )}
       </AnimatePresence>
     </div>
   )
 }
+

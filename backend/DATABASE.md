@@ -1,31 +1,24 @@
-# Portfolio Database Schema
+# Portfolio Database & Services Architecture
 
-## contact_submissions
+## Primary Database: Supabase PostgreSQL 17 + pgvector
 
-Stores contact form submissions from the portfolio website.
+The portfolio application uses a unified Supabase PostgreSQL database for persistent storage, user analytics, and AI vector search.
 
-```sql
-CREATE TABLE contact_submissions (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(255) NOT NULL,
-    subject VARCHAR(255),
-    message TEXT NOT NULL,
-    status ENUM('new', 'read', 'replied') DEFAULT 'new',
-    ip_address VARCHAR(45),
-    user_agent TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_email (email),
-    INDEX idx_status (status),
-    INDEX idx_created_at (created_at)
-);
-```
+### Core Tables:
+1. `contact_submissions` — Stores contact form inquiries with visitor metadata.
+2. `visitor_analytics` — Tracks site interactions and performance metrics.
+3. `portfolio_documents` & `document_chunks` — Knowledge base chunks with `vector(768)` HNSW embeddings for RAG queries.
+4. `ats_analyses` — AI ATS resume score reports.
+5. `generated_resumes` — IEEE/Standard generated resume records.
+6. `placement_attempts` — Interview assessment history.
+7. `github_sync_events` — Webhook sync history.
+
+## Email Delivery Service: Resend API
+
+Contact notifications are dispatched via **Resend REST API** (HTTPS Port 443) to `raghulraja2006@gmail.com` with automatic reply-to set to the submitter's email address. SMTP (SSL 465) is maintained as a fallback.
 
 ## Setup Instructions
 
-1. Install MySQL
-2. Create database: `CREATE DATABASE portfolio;`
-3. Update `.env` with your MySQL credentials
-4. Run backend: `uvicorn main:app --reload`
-5. The table will be created automatically on startup
+1. Configure `backend/.env` with your Supabase and Resend credentials (see `backend/.env.example`).
+2. Run migrations: `backend/migrations/02_unified_supabase_schema.sql` (already active in production Supabase).
+3. Run backend: `uvicorn main:app --reload`

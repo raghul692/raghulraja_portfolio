@@ -3,26 +3,41 @@ from pydantic import BaseModel
 from typing import Optional
 from app.services.ats_engine import analyze_resume
 
-router = APIRouter(prefix="/api/v1/ats", tags=["ATS Resume Checker"])
+router = APIRouter(tags=["ATS Resume Checker"])
 
 class ATSAnalyzeTextRequest(BaseModel):
-    resume_text: str
-    target_role: str = "Full Stack Engineer"
-    job_description: str = ""
+    resume_text: Optional[str] = None
+    resumeText: Optional[str] = None
+    target_role: Optional[str] = "Full Stack Engineer"
+    targetRole: Optional[str] = None
+    job_description: Optional[str] = ""
+    jdText: Optional[str] = None
 
-@router.post("/analyze")
+    def get_resume_text(self) -> str:
+        return (self.resume_text or self.resumeText or "").strip()
+
+    def get_target_role(self) -> str:
+        return self.target_role or self.targetRole or "Full Stack Engineer"
+
+    def get_job_description(self) -> str:
+        return self.job_description or self.jdText or ""
+
+@router.post("/api/v1/ats/analyze")
+@router.post("/api/ats/analyze")
 def analyze_resume_text(req: ATSAnalyzeTextRequest):
-    if not req.resume_text or not req.resume_text.strip():
+    resume_text = req.get_resume_text()
+    if not resume_text:
         raise HTTPException(status_code=400, detail="Resume text is required.")
     
     result = analyze_resume(
-        resume_text=req.resume_text,
-        target_role=req.target_role,
-        job_description=req.job_description
+        resume_text=resume_text,
+        target_role=req.get_target_role(),
+        job_description=req.get_job_description()
     )
     return result
 
-@router.post("/upload")
+@router.post("/api/v1/ats/upload")
+@router.post("/api/ats/upload")
 async def analyze_uploaded_resume(
     file: UploadFile = File(...),
     target_role: str = Form("Full Stack Engineer"),
@@ -63,3 +78,4 @@ async def analyze_uploaded_resume(
         job_description=job_description
     )
     return result
+

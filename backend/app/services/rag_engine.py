@@ -1,6 +1,6 @@
-import math
 import logging
-from app.db import get_all_chunks
+from typing import List, Dict, Any
+from app.db import search_chunks_vector, get_all_chunks
 from app.services.embeddings import generate_embedding
 from app.services.llm_provider import generate_ai_response
 
@@ -29,63 +29,77 @@ Highlight education, leadership, teamwork, career trajectory, soft skills, and c
 }
 
 
-def cosine_similarity(vec_a: list[float], vec_b: list[float]) -> float:
-    """Calculates cosine similarity between two float vectors."""
-    if not vec_a or not vec_b or len(vec_a) != len(vec_b):
-        return 0.0
-    dot = sum(a * b for a, b in zip(vec_a, vec_b))
-    norm_a = math.sqrt(sum(a * a for a in vec_a))
-    norm_b = math.sqrt(sum(b * b for b in vec_b))
-    if norm_a == 0 or norm_b == 0:
-        return 0.0
-    return dot / (norm_a * norm_b)
-
-
-def search_portfolio_knowledge(query: str, top_k: int = 5) -> list[dict]:
-    """Hybrid Retrieval (BM25 Sparse FTS + Vector Similarity + RRF Reranking)."""
-    all_chunks = get_all_chunks()
-    if not all_chunks:
-        logger.warning("No portfolio chunks found in storage.")
+def search_portfolio_knowledge(query: str, top_k: int = 5) -> List[Dict[str, Any]]:
+    """
+    Retrieves relevant portfolio document chunks using Supabase PostgreSQL + pgvector.
+    Workflow:
+      User Query -> Gemini Embedding (768-dim) -> Supabase PostgreSQL (pgvector match_portfolio_chunks) -> Results
+    """
+    if not query or not query.strip():
         return []
 
-    query_vector = generate_embedding(query)
+    # 1. Generate query embedding (768 dimensions)
+    try:
+        query_vector = generate_embedding(query)
+    except Exception as e:
+        logger.error(f"Failed to generate query embedding: {e}")
+        query_vector = None
+
+    if not query_vector:
+        logger.warning("No embedding generated. Falling back to keyword search.")
+        return _fallback_keyword_search(query, top_k)
+
+    # 2. Query Supabase PostgreSQL via pgvector match_portfolio_chunks
+    try:
+        results = search_chunks_vector(
+            query_embedding=query_vector,
+            match_threshold=0.25,
+            match_count=top_k
+        )
+        if results:
+            return results
+        
+        # If strict threshold returned 0 matches, retry with lower threshold
+        results = search_chunks_vector(
+            query_embedding=query_vector,
+            match_threshold=0.10,
+            match_count=top_k
+        )
+        if results:
+            return results
+    except Exception as e:
+        logger.error(f"pgvector query failed: {e}. Falling back to cached chunks.")
+
+    return _fallback_keyword_search(query, top_k)
+
+
+def _fallback_keyword_search(query: str, top_k: int = 5) -> List[Dict[str, Any]]:
+    """Fallback keyword matching over cached chunks if vector search is temporarily unreachable."""
+    chunks = get_all_chunks()
+    if not chunks:
+        return []
+
     query_terms = set(query.lower().split())
+    scored = []
+    for c in chunks:
+        text = c.get("chunk_text", "").lower()
+        words = set(text.split())
+        overlap = len(query_terms.intersection(words))
+        if overlap > 0:
+            score = overlap / (len(query_terms) + 1.0)
+            scored.append({
+                "chunk_id": c.get("id"),
+                "document_id": c.get("document_id"),
+                "document_key": c.get("document_key", ""),
+                "title": c.get("title", "Portfolio Source"),
+                "category": c.get("category", "General"),
+                "chunk_index": c.get("chunk_index", 0),
+                "chunk_text": c.get("chunk_text", ""),
+                "similarity": score
+            })
 
-    scored_chunks = []
-    for chunk in all_chunks:
-        chunk_text = chunk.get("chunk_text", "")
-        chunk_words = set(chunk_text.lower().split())
-        
-        # 1. Sparse BM25-like overlap score
-        overlap = len(query_terms.intersection(chunk_words))
-        sparse_score = overlap / (len(query_terms) + 1.0)
-
-        # 2. Dense Vector Cosine Similarity
-        chunk_emb = chunk.get("embedding")
-        if isinstance(chunk_emb, str):
-            import json
-            try:
-                chunk_emb = json.loads(chunk_emb)
-            except:
-                chunk_emb = []
-        
-        dense_score = cosine_similarity(query_vector, chunk_emb) if chunk_emb else 0.0
-
-        # 3. Hybrid Score (0.6 dense + 0.4 sparse)
-        hybrid_score = (0.6 * dense_score) + (0.4 * sparse_score)
-        
-        scored_chunks.append({
-            "chunk_id": chunk.get("id"),
-            "title": chunk.get("title", "Portfolio Source"),
-            "category": chunk.get("category", "General"),
-            "document_key": chunk.get("document_key", ""),
-            "chunk_text": chunk_text,
-            "score": hybrid_score
-        })
-
-    # Sort descending by hybrid score
-    scored_chunks.sort(key=lambda x: x["score"], reverse=True)
-    return scored_chunks[:top_k]
+    scored.sort(key=lambda x: x["similarity"], reverse=True)
+    return scored[:top_k]
 
 
 def answer_portfolio_query(query: str, persona: str = "default") -> dict:
@@ -99,11 +113,10 @@ def answer_portfolio_query(query: str, persona: str = "default") -> dict:
         context_blocks = []
         citations = []
         for i, chunk in enumerate(retrieved_chunks, 1):
-            if chunk["score"] > 0.1:
-                source_title = chunk["title"] or chunk["document_key"]
-                context_blocks.append(f"--- Chunk #{i} [Source: {source_title}] ---\n{chunk['chunk_text']}")
-                if source_title not in citations:
-                    citations.append(source_title)
+            source_title = chunk.get("title") or chunk.get("document_key") or "Portfolio Reference"
+            context_blocks.append(f"--- Chunk #{i} [Source: {source_title}] ---\n{chunk.get('chunk_text')}")
+            if source_title not in citations:
+                citations.append(source_title)
         context_str = "\n\n".join(context_blocks) if context_blocks else "General query context."
 
     system_instruction = PERSONA_INSTRUCTIONS.get(persona, PERSONA_INSTRUCTIONS["default"])

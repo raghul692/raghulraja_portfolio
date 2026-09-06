@@ -6,7 +6,6 @@ from fastapi import FastAPI, HTTPException, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-import mysql.connector
 import re
 import logging
 from datetime import datetime
@@ -19,7 +18,8 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from app.limiter import limiter
 
-# Import Portfolio AI Routers
+# Import Database & Portfolio AI Routers
+from app.db import init_db, insert_contact_submission, get_db
 from app.routers import chat, ats, resume, placement, github, admin
 
 # Load environment variables explicitly from backend/.env and current directory
@@ -65,86 +65,13 @@ class ContactSubmission(BaseModel):
     message: str
     honeypot: str | None = None
 
-import sqlite3
-
-USE_SQLITE = False
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "portfolio.db")
-
-def get_db():
-    global USE_SQLITE
-    if USE_SQLITE:
-        conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row
-        return conn
-
-    db_host = os.getenv("DB_HOST", "localhost")
-    # If explicitly running on Render without remote DB host, default directly to SQLite
-    if os.getenv("RENDER") and (db_host == "localhost" or db_host == "127.0.0.1"):
-        USE_SQLITE = True
-        logger.info("Using embedded SQLite database for portfolio contact submissions.")
-        conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row
-        return conn
-
-    try:
-        return mysql.connector.connect(
-            host=db_host,
-            user=os.getenv("DB_USER", "root"),
-            password=os.getenv("DB_PASSWORD", ""),
-            database=os.getenv("DB_NAME", "portfolio"),
-            connect_timeout=3,
-        )
-    except Exception as err:
-        logger.info("MySQL unavailable (%s). Switched to embedded SQLite database.", err)
-        USE_SQLITE = True
-        conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row
-        return conn
-
-def init_db():
-    global USE_SQLITE
-    try:
-        conn = get_db()
-        cursor = conn.cursor()
-        if USE_SQLITE:
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS contact_submissions (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name TEXT NOT NULL,
-                    email TEXT NOT NULL,
-                    subject TEXT,
-                    message TEXT NOT NULL,
-                    status TEXT DEFAULT 'new',
-                    ip_address TEXT,
-                    user_agent TEXT,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-            """)
-        else:
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS contact_submissions (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    name VARCHAR(100) NOT NULL,
-                    email VARCHAR(255) NOT NULL,
-                    subject VARCHAR(255),
-                    message TEXT NOT NULL,
-                    status ENUM('new', 'read', 'replied') DEFAULT 'new',
-                    ip_address VARCHAR(45),
-                    user_agent TEXT,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-                )
-            """)
-        conn.commit()
-        cursor.close()
-        conn.close()
-        logger.info("Database initialized successfully (Engine: %s)", "SQLite" if USE_SQLITE else "MySQL")
-    except Exception as e:
-        logger.error("Database initialization failed: %s", e)
-
 @app.on_event("startup")
 def startup():
-    init_db()
+    try:
+        init_db()
+        logger.info("Application startup: Supabase PostgreSQL connected.")
+    except Exception as e:
+        logger.error(f"Application startup error connecting to Supabase: {e}")
 
 @app.get("/")
 def root():
@@ -157,24 +84,26 @@ def root():
 
 @app.get("/api/health")
 def health():
+    db_status = "healthy"
+    try:
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT 1;")
+    except Exception as e:
+        db_status = f"unhealthy: {e}"
+
     return {
-        "status": "ok",
+        "status": "ok" if db_status == "healthy" else "degraded",
         "system": "Portfolio AI Intelligence Suite",
         "database_engine": "Supabase PostgreSQL + pgvector",
+        "database_status": db_status,
         "timestamp": datetime.utcnow().isoformat()
     }
 
 def send_email_notification(submission: ContactSubmission):
-    smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com")
-    smtp_port = int(os.getenv("SMTP_PORT", "587"))
-    email_user = os.getenv("EMAIL_USER", "").strip()
-    email_password = os.getenv("EMAIL_PASSWORD", "").replace(" ", "").strip()
+    resend_api_key = os.getenv("RESEND_API_KEY", "").strip()
+    resend_from = os.getenv("RESEND_FROM_EMAIL", "Portfolio Contact <onboarding@resend.dev>").strip()
     to_email = os.getenv("TO_EMAIL", "raghulraja2006@gmail.com").strip()
-
-    if not email_user or not email_password:
-        logger.error("EMAIL_USER or EMAIL_PASSWORD is not configured in backend environment")
-        return {"status": "failed", "error": "Email credentials are not configured"}
-
     subject = f"New Contact Form Submission: {submission.subject or 'No Subject'}"
 
     html_content = f"""<!DOCTYPE html>
@@ -246,11 +175,48 @@ def send_email_notification(submission: ContactSubmission):
 </body>
 </html>"""
 
+    # 1. Primary: Send via Resend HTTP API (Fast, Reliable, Port 443)
+    if resend_api_key:
+        try:
+            import requests
+            resend_url = "https://api.resend.com/emails"
+            headers = {
+                "Authorization": f"Bearer {resend_api_key}",
+                "Content-Type": "application/json"
+            }
+            payload = {
+                "from": resend_from,
+                "to": [to_email],
+                "reply_to": submission.email,
+                "subject": subject,
+                "html": html_content
+            }
+            res = requests.post(resend_url, headers=headers, json=payload, timeout=10)
+            if res.status_code in (200, 201):
+                email_id = res.json().get("id")
+                logger.info("Email notification sent successfully via Resend API to %s (ID: %s)", to_email, email_id)
+                return {"status": "sent", "provider": "resend", "id": email_id}
+            else:
+                logger.error("Resend API failed (%s): %s. Attempting SMTP fallback...", res.status_code, res.text)
+        except Exception as resend_err:
+            logger.error("Resend API request exception: %s. Attempting SMTP fallback...", resend_err)
+
+    # 2. Fallback: SMTP Sending
+    smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+    smtp_port = int(os.getenv("SMTP_PORT", "465"))
+    email_user = os.getenv("EMAIL_USER", "").strip()
+    email_password = os.getenv("EMAIL_PASSWORD", "").replace(" ", "").strip()
+
+    if not email_user or not email_password:
+        logger.error("Neither Resend API nor SMTP credentials configured in backend environment")
+        return {"status": "failed", "error": "No email delivery service available"}
+
     domain = email_user.split('@')[1] if '@' in email_user else 'gmail.com'
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
     msg["From"] = email_user
     msg["To"] = to_email
+    msg["Reply-To"] = submission.email
     msg["Message-ID"] = f"<{datetime.utcnow().timestamp()}@{domain}>"
 
     msg.attach(MIMEText(html_content, "html", "utf-8"))
@@ -267,31 +233,24 @@ def send_email_notification(submission: ContactSubmission):
                 server.ehlo()
                 server.login(email_user, email_password)
                 server.sendmail(email_user, [to_email], msg.as_string())
-        logger.info("Email notification sent successfully to %s", to_email)
-        return {"status": "sent"}
+        logger.info("Email notification sent successfully via SMTP to %s", to_email)
+        return {"status": "sent", "provider": "smtp"}
     except Exception as e:
-        logger.error("Failed to send email notification: %s", e)
-        # Attempt fallback using SMTP_SSL port 465 if STARTTLS on 587 failed
+        logger.error("Failed to send email notification via SMTP: %s", e)
         try:
             logger.info("Attempting SMTP_SSL fallback on port 465...")
             with smtplib.SMTP_SSL(smtp_server, 465, timeout=10) as server:
                 server.login(email_user, email_password)
                 server.sendmail(email_user, [to_email], msg.as_string())
-            logger.info("Fallback email notification sent successfully to %s", to_email)
-            return {"status": "sent"}
+            logger.info("Fallback SMTP email notification sent successfully to %s", to_email)
+            return {"status": "sent", "provider": "smtp_ssl_fallback"}
         except Exception as fallback_err:
             logger.error("Fallback SMTP sending also failed: %s", fallback_err)
             return {"status": "failed", "error": str(e)}
 
 def send_auto_responder_email(submission: ContactSubmission):
-    smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com")
-    smtp_port = int(os.getenv("SMTP_PORT", "587"))
-    email_user = os.getenv("EMAIL_USER", "").strip()
-    email_password = os.getenv("EMAIL_PASSWORD", "").replace(" ", "").strip()
-
-    if not email_user or not email_password:
-        logger.warning("Auto-responder skipped: EMAIL_USER or EMAIL_PASSWORD not configured")
-        return {"status": "skipped", "reason": "No credentials"}
+    resend_api_key = os.getenv("RESEND_API_KEY", "").strip()
+    resend_from = os.getenv("RESEND_FROM_EMAIL", "Portfolio Contact <onboarding@resend.dev>").strip()
 
     subject = f"Thank you for contacting Raghul Raja M"
     html_content = f"""<!DOCTYPE html>
@@ -304,6 +263,31 @@ def send_auto_responder_email(submission: ContactSubmission):
   </div>
 </body>
 </html>"""
+
+    # 1. Attempt Resend for auto-responder
+    if resend_api_key:
+        try:
+            import requests
+            res = requests.post(
+                "https://api.resend.com/emails",
+                headers={"Authorization": f"Bearer {resend_api_key}", "Content-Type": "application/json"},
+                json={"from": resend_from, "to": [submission.email], "subject": subject, "html": html_content},
+                timeout=8
+            )
+            if res.status_code in (200, 201):
+                logger.info("Auto responder email sent via Resend to %s", submission.email)
+                return {"status": "sent", "provider": "resend"}
+        except Exception:
+            pass
+
+    # 2. SMTP fallback
+    smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+    smtp_port = int(os.getenv("SMTP_PORT", "465"))
+    email_user = os.getenv("EMAIL_USER", "").strip()
+    email_password = os.getenv("EMAIL_PASSWORD", "").replace(" ", "").strip()
+
+    if not email_user or not email_password:
+        return {"status": "skipped", "reason": "No SMTP credentials for external auto-responder"}
 
     domain = email_user.split('@')[1] if '@' in email_user else 'gmail.com'
     msg = MIMEMultipart("alternative")
@@ -324,8 +308,8 @@ def send_auto_responder_email(submission: ContactSubmission):
                 server.starttls()
                 server.login(email_user, email_password)
                 server.sendmail(email_user, [submission.email], msg.as_string())
-        logger.info("Auto responder email sent to %s", submission.email)
-        return {"status": "sent"}
+        logger.info("Auto responder email sent via SMTP to %s", submission.email)
+        return {"status": "sent", "provider": "smtp"}
     except Exception as e:
         logger.error("Auto responder failed: %s", e)
         return {"status": "failed", "error": str(e)}
@@ -347,28 +331,14 @@ async def contact(request: Request, submission: ContactSubmission, background_ta
         raise HTTPException(status_code=400, detail="Message must be at least 20 characters")
 
     try:
-        conn = get_db()
-        cursor = conn.cursor()
-        query = (
-            "INSERT INTO contact_submissions (name, email, subject, message, ip_address, user_agent) VALUES (?, ?, ?, ?, ?, ?)"
-            if USE_SQLITE else
-            "INSERT INTO contact_submissions (name, email, subject, message, ip_address, user_agent) VALUES (%s, %s, %s, %s, %s, %s)"
+        submission_id = insert_contact_submission(
+            name=submission.name,
+            email=submission.email,
+            subject=submission.subject,
+            message=submission.message,
+            ip_address=request.client.host if request.client else None,
+            user_agent=request.headers.get("user-agent")
         )
-        cursor.execute(
-            query,
-            (
-                submission.name,
-                submission.email,
-                submission.subject,
-                submission.message,
-                request.client.host if request.client else None,
-                request.headers.get("user-agent"),
-            ),
-        )
-        conn.commit()
-        submission_id = cursor.lastrowid
-        cursor.close()
-        conn.close()
 
         # Queue emails in background to return instant 200 response to client
         background_tasks.add_task(send_email_notification, submission)
@@ -383,7 +353,7 @@ async def contact(request: Request, submission: ContactSubmission, background_ta
             },
         )
     except Exception as e:
-        logger.error("Failed to save contact submission: %s", e)
+        logger.error("Failed to save contact submission to Supabase: %s", e)
         raise HTTPException(status_code=500, detail=f"Failed to save message: {str(e)}")
 
 if __name__ == "__main__":

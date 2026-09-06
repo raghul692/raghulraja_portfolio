@@ -5,24 +5,30 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Settings(BaseModel):
-    # Supabase REST API Settings
-    SUPABASE_URL: str = os.getenv("SUPABASE_URL", "https://arsvfzmlotzbkgfxjirn.supabase.co")
-    SUPABASE_ANON_KEY: str = os.getenv("SUPABASE_ANON_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyc3Zmem1sb3R6YmtnZnhqaXJuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0NDEzMzAsImV4cCI6MjEwMzAxNzMzMH0.zXYXZOVan5OyPMJxJFMWJ4XyzG-x-GIq9OMRan18Rms")
+    # Supabase REST & Direct PostgreSQL Settings
+    SUPABASE_URL: str = os.getenv("SUPABASE_URL", "https://brmafvpjvdgieelcgivi.supabase.co")
+    SUPABASE_ANON_KEY: str = os.getenv(
+        "SUPABASE_ANON_KEY",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJybWFmdnBqdmRnaWVlbGNnaXZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2NjQ5NzEsImV4cCI6MjEwNDI0MDk3MX0.hxhV4CUDghIdX6aCcSPJ7RZKMj2q_Q8XEy0Ty_G99wg"
+    )
     
-    # Supabase Direct DB Settings
-    SUPABASE_DB_HOST: str = os.getenv("SUPABASE_DB_HOST", "db.arsvfzmlotzbkgfxjirn.supabase.co")
-    SUPABASE_DB_USER: str = os.getenv("SUPABASE_DB_USER", "postgres")
-    SUPABASE_DB_PASSWORD: str = os.getenv("SUPABASE_DB_PASSWORD", "Ragul2006#@")
+    SUPABASE_DB_HOST: str = os.getenv("SUPABASE_DB_HOST", "db.brmafvpjvdgieelcgivi.supabase.co")
+    SUPABASE_DB_USER: str = os.getenv("SUPABASE_DB_USER", "portfolio_app")
+    SUPABASE_DB_PASSWORD: str = os.getenv("SUPABASE_DB_PASSWORD", "")
     SUPABASE_DB_NAME: str = os.getenv("SUPABASE_DB_NAME", "postgres")
+    SUPABASE_DB_PORT: int = int(os.getenv("SUPABASE_DB_PORT", "5432"))
+
+    # Production unified DATABASE_URL (for Render / Supabase)
+    DATABASE_URL: str = os.getenv(
+        "DATABASE_URL",
+        f"postgresql://{os.getenv('SUPABASE_DB_USER', 'portfolio_app')}:{os.getenv('SUPABASE_DB_PASSWORD', '')}@{os.getenv('SUPABASE_DB_HOST', 'db.brmafvpjvdgieelcgivi.supabase.co')}:{os.getenv('SUPABASE_DB_PORT', '5432')}/{os.getenv('SUPABASE_DB_NAME', 'postgres')}"
+    )
 
     # Gemini AI Key
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
 
     # GitHub Webhook Secret
     GITHUB_WEBHOOK_SECRET: str = os.getenv("GITHUB_WEBHOOK_SECRET", "portfolio_ai_secret_key")
-
-    # Local SQLite Fallback DB Path
-    LOCAL_DB_PATH: str = os.getenv("LOCAL_DB_PATH", "portfolio_ai.db")
 
     # API Settings
     PROJECT_NAME: str = "Portfolio AI System API"

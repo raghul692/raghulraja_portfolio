@@ -18,10 +18,13 @@ __pycache__/
 *$py.class
 backend/__pycache__/
 
-# Databases
+# Databases & Backups
 *.db
 *.sqlite
 *.sqlite3
+backend/backups/
+backend/scripts/backups/
+backend/venv/
 
 # IDE & OS files
 .DS_Store

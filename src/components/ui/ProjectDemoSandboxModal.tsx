@@ -131,7 +131,8 @@ const demoConfigs: Record<string, {
           vulnerabilitiesFound: 1,
           severity: 'HIGH (Reflected XSS)',
           parameter: 'query',
-          payload: '\"><svg/onload=confirm(document.domain)>',
+          payload: '"><svg/onload=confirm(document.domain)>',
+
           mitigation: 'Implement HTML Entity Encoding & Content-Security-Policy (CSP) headers.',
         },
         null,

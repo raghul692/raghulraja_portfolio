@@ -1,9 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, lazy, Suspense } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Code, Brain, Database, Palette, Layers, Sparkles, Box, ExternalLink, X } from 'lucide-react'
-import TechGalaxy3D, { SkillNodeData } from '@/components/three/TechGalaxy3D'
+import type { SkillNodeData } from '@/components/three/TechGalaxy3D'
+
+const TechGalaxy3D = lazy(() => import('@/components/three/TechGalaxy3D'))
+
 
 interface SkillCategory {
   id: string
@@ -127,13 +130,23 @@ export default function SkillMatrix() {
       {/* VIEW MODE 1: 3D TECH GALAXY */}
       {viewMode === '3d' && (
         <div className="space-y-6">
-          <TechGalaxy3D
-            skills={allGalaxySkills}
-            selectedSkill={selectedGalaxySkill}
-            onSelectSkill={(skill) => setSelectedGalaxySkill(skill)}
-          />
+          <Suspense
+            fallback={
+              <div className="w-full h-[450px] sm:h-[550px] rounded-2xl glass border border-glass-border flex flex-col items-center justify-center gap-3 text-muted-foreground">
+                <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+                <span className="text-xs font-mono">Initializing 3D Orbital Canvas...</span>
+              </div>
+            }
+          >
+            <TechGalaxy3D
+              skills={allGalaxySkills}
+              selectedSkill={selectedGalaxySkill}
+              onSelectSkill={(skill) => setSelectedGalaxySkill(skill)}
+            />
+          </Suspense>
 
           {/* Interactive Selected Tech Inspector Panel */}
+
           <AnimatePresence mode="wait">
             {selectedGalaxySkill && (
               <motion.div
