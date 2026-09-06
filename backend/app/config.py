@@ -12,16 +12,16 @@ class Settings(BaseModel):
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJybWFmdnBqdmRnaWVlbGNnaXZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2NjQ5NzEsImV4cCI6MjEwNDI0MDk3MX0.hxhV4CUDghIdX6aCcSPJ7RZKMj2q_Q8XEy0Ty_G99wg"
     )
     
-    SUPABASE_DB_HOST: str = os.getenv("SUPABASE_DB_HOST", "db.brmafvpjvdgieelcgivi.supabase.co")
-    SUPABASE_DB_USER: str = os.getenv("SUPABASE_DB_USER", "portfolio_app")
+    SUPABASE_DB_HOST: str = os.getenv("SUPABASE_DB_HOST", "aws-0-ap-south-1.pooler.supabase.com")
+    SUPABASE_DB_USER: str = os.getenv("SUPABASE_DB_USER", "portfolio_app.brmafvpjvdgieelcgivi")
     SUPABASE_DB_PASSWORD: str = os.getenv("SUPABASE_DB_PASSWORD", "")
     SUPABASE_DB_NAME: str = os.getenv("SUPABASE_DB_NAME", "postgres")
     SUPABASE_DB_PORT: int = int(os.getenv("SUPABASE_DB_PORT", "5432"))
 
-    # Production unified DATABASE_URL (for Render / Supabase)
+    # Production unified DATABASE_URL (for Render / Supabase IPv4 Pooler)
     DATABASE_URL: str = os.getenv(
         "DATABASE_URL",
-        f"postgresql://{os.getenv('SUPABASE_DB_USER', 'portfolio_app')}:{os.getenv('SUPABASE_DB_PASSWORD', '')}@{os.getenv('SUPABASE_DB_HOST', 'db.brmafvpjvdgieelcgivi.supabase.co')}:{os.getenv('SUPABASE_DB_PORT', '5432')}/{os.getenv('SUPABASE_DB_NAME', 'postgres')}"
+        f"postgresql://{os.getenv('SUPABASE_DB_USER', 'portfolio_app.brmafvpjvdgieelcgivi')}:{os.getenv('SUPABASE_DB_PASSWORD', '')}@{os.getenv('SUPABASE_DB_HOST', 'aws-0-ap-south-1.pooler.supabase.com')}:{os.getenv('SUPABASE_DB_PORT', '5432')}/{os.getenv('SUPABASE_DB_NAME', 'postgres')}?sslmode=require"
     )
 
     # Gemini AI Key
