@@ -3,4 +3,4 @@ Allow: /
 Disallow: /api/
 
 Sitemap: https://raghulraja.dev/sitemap.xml
-Host: https://raghulraja.dev
+Host: https:///raghulraja.is-a.dev/
