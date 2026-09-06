@@ -175,31 +175,58 @@ def send_email_notification(submission: ContactSubmission):
 </body>
 </html>"""
 
-    # 1. Primary: Send via Resend HTTP API (Fast, Reliable, Port 443)
+    # 1. Primary: Send via Resend HTTP API (Built-in urllib, zero external dependency issues)
     if resend_api_key:
         try:
-            import requests
-            resend_url = "https://api.resend.com/emails"
+            import urllib.request
+            import json
+
             headers = {
                 "Authorization": f"Bearer {resend_api_key}",
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "User-Agent": "Portfolio-Contact/1.0"
             }
-            payload = {
+            payload = json.dumps({
                 "from": resend_from,
                 "to": [to_email],
                 "reply_to": submission.email,
                 "subject": subject,
                 "html": html_content
-            }
-            res = requests.post(resend_url, headers=headers, json=payload, timeout=10)
-            if res.status_code in (200, 201):
-                email_id = res.json().get("id")
+            }).encode("utf-8")
+
+            req = urllib.request.Request("https://api.resend.com/emails", data=payload, headers=headers)
+            with urllib.request.urlopen(req, timeout=12) as response:
+                result_data = json.loads(response.read().decode())
+                email_id = result_data.get("id")
                 logger.info("Email notification sent successfully via Resend API to %s (ID: %s)", to_email, email_id)
                 return {"status": "sent", "provider": "resend", "id": email_id}
-            else:
-                logger.error("Resend API failed (%s): %s. Attempting SMTP fallback...", res.status_code, res.text)
         except Exception as resend_err:
-            logger.error("Resend API request exception: %s. Attempting SMTP fallback...", resend_err)
+            logger.error("Resend API urllib exception: %s. Attempting fallback...", resend_err)
+            try:
+                import requests
+                headers = {
+                    "Authorization": f"Bearer {resend_api_key}",
+                    "Content-Type": "application/json",
+                    "User-Agent": "Portfolio-Contact/1.0"
+                }
+                res = requests.post(
+                    "https://api.resend.com/emails",
+                    headers=headers,
+                    json={
+                        "from": resend_from,
+                        "to": [to_email],
+                        "reply_to": submission.email,
+                        "subject": subject,
+                        "html": html_content
+                    },
+                    timeout=10
+                )
+                if res.status_code in (200, 201):
+                    email_id = res.json().get("id")
+                    logger.info("Email notification sent successfully via Resend requests to %s (ID: %s)", to_email, email_id)
+                    return {"status": "sent", "provider": "resend", "id": email_id}
+            except Exception as req_err:
+                logger.error("Resend requests fallback also failed: %s", req_err)
 
     # 2. Fallback: SMTP Sending
     smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com")
@@ -267,14 +294,21 @@ def send_auto_responder_email(submission: ContactSubmission):
     # 1. Attempt Resend for auto-responder
     if resend_api_key:
         try:
-            import requests
-            res = requests.post(
-                "https://api.resend.com/emails",
-                headers={"Authorization": f"Bearer {resend_api_key}", "Content-Type": "application/json"},
-                json={"from": resend_from, "to": [submission.email], "subject": subject, "html": html_content},
-                timeout=8
-            )
-            if res.status_code in (200, 201):
+            import urllib.request
+            import json
+            headers = {
+                "Authorization": f"Bearer {resend_api_key}",
+                "Content-Type": "application/json",
+                "User-Agent": "Portfolio-Contact/1.0"
+            }
+            payload = json.dumps({
+                "from": resend_from,
+                "to": [submission.email],
+                "subject": subject,
+                "html": html_content
+            }).encode("utf-8")
+            req = urllib.request.Request("https://api.resend.com/emails", data=payload, headers=headers)
+            with urllib.request.urlopen(req, timeout=8) as resp:
                 logger.info("Auto responder email sent via Resend to %s", submission.email)
                 return {"status": "sent", "provider": "resend"}
         except Exception:
@@ -340,8 +374,10 @@ async def contact(request: Request, submission: ContactSubmission, background_ta
             user_agent=request.headers.get("user-agent")
         )
 
-        # Queue emails in background to return instant 200 response to client
-        background_tasks.add_task(send_email_notification, submission)
+        # Send owner notification immediately so delivery to Gmail is guaranteed
+        email_result = send_email_notification(submission)
+
+        # Queue auto-responder in background
         background_tasks.add_task(send_auto_responder_email, submission)
 
         return JSONResponse(
@@ -349,12 +385,13 @@ async def contact(request: Request, submission: ContactSubmission, background_ta
             content={
                 "message": "Message sent successfully!",
                 "id": submission_id,
-                "email": {"status": "queued"},
+                "email": email_result,
             },
         )
     except Exception as e:
         logger.error("Failed to save contact submission to Supabase: %s", e)
         raise HTTPException(status_code=500, detail=f"Failed to save message: {str(e)}")
+
 
 if __name__ == "__main__":
     import uvicorn
