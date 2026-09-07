@@ -27,8 +27,9 @@ class Settings(BaseModel):
     # Gemini AI Key
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
 
-    # GitHub Webhook Secret
+    # GitHub Integration
     GITHUB_WEBHOOK_SECRET: str = os.getenv("GITHUB_WEBHOOK_SECRET", "portfolio_ai_secret_key")
+    GITHUB_TOKEN: str = os.getenv("GITHUB_TOKEN", "")
 
     # API Settings
     PROJECT_NAME: str = "Portfolio AI System API"
