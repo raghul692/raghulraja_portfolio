@@ -50,8 +50,128 @@
     --ring: 238 83% 67%;
   }
 
+  /* ☀️ SUN MODE: Minimal, Apple-like off-white, dark charcoal typography */
+  .theme-sun {
+    --background: 40 20% 98%;
+    --foreground: 240 10% 4%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 4%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 4%;
+    --primary: 238 83% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 189 94% 38%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 93%;
+    --muted-foreground: 240 3.8% 42%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --border: 240 5.9% 88%;
+    --input: 240 5.9% 88%;
+    --ring: 238 83% 58%;
+  }
+  .theme-sun .bg-surface-dark {
+    background-color: #fafaf9 !important;
+  }
+  .theme-sun .environmental-gradient-overlay {
+    background: radial-gradient(circle at 50% 0%, rgba(254, 243, 199, 0.35) 0%, rgba(250, 250, 249, 0.95) 75%);
+  }
+  .theme-sun .glass {
+    background-color: rgba(255, 255, 255, 0.72) !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
+  }
+  .theme-sun .glass:hover {
+    background-color: rgba(255, 255, 255, 0.92) !important;
+    border-color: rgba(99, 102, 241, 0.3) !important;
+  }
+  .theme-sun .text-white {
+    color: #18181b !important;
+  }
+  .theme-sun .text-slate-200,
+  .theme-sun .text-slate-300 {
+    color: #27272a !important;
+  }
+
+  /* 🌑 DARK MODE: Signature obsidian baseline portfolio */
+  .theme-dark .environmental-gradient-overlay {
+    background: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.08) 0px, transparent 50%);
+  }
+
+  /* 🌙 MOON MODE: Futuristic midnight navy & star atmosphere */
+  .theme-moon {
+    --background: 224 71% 4%;
+    --foreground: 210 40% 98%;
+    --card: 224 71% 7%;
+    --card-foreground: 210 40% 98%;
+    --border: 226 50% 16%;
+    --muted: 223 47% 12%;
+    --muted-foreground: 215 20% 68%;
+  }
+  .theme-moon .bg-surface-dark {
+    background-color: #030712 !important;
+  }
+  .theme-moon .environmental-gradient-overlay {
+    background: radial-gradient(ellipse at 50% 0%, rgba(30, 27, 75, 0.45) 0%, rgba(3, 7, 18, 0.98) 75%);
+  }
+
+  /* 🌧️ RAIN MODE: Realistic dark-slate storm & atmospheric depth */
+  .theme-rain {
+    --background: 215 28% 9%;
+    --foreground: 210 20% 98%;
+    --card: 215 25% 12%;
+    --card-foreground: 210 20% 98%;
+    --border: 215 25% 20%;
+    --muted: 215 25% 16%;
+    --muted-foreground: 215 16% 68%;
+  }
+  .theme-rain .bg-surface-dark {
+    background-color: #080e1a !important;
+  }
+  .theme-rain .environmental-gradient-overlay {
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(8, 14, 26, 0.98) 100%);
+  }
+
+  /* ❄️ SNOW MODE: Soft winter frost & ice-blue ambient depth */
+  .theme-snow {
+    --background: 210 30% 96%;
+    --foreground: 220 20% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 10%;
+    --border: 214 32% 86%;
+    --muted: 210 40% 91%;
+    --muted-foreground: 215 16% 38%;
+    --primary: 217 91% 54%;
+  }
+  .theme-snow .bg-surface-dark {
+    background-color: #f1f5f9 !important;
+  }
+  .theme-snow .environmental-gradient-overlay {
+    background: radial-gradient(circle at 50% 20%, rgba(224, 242, 254, 0.45) 0%, rgba(241, 245, 249, 0.95) 80%);
+  }
+  .theme-snow .glass {
+    background-color: rgba(255, 255, 255, 0.78) !important;
+    border-color: rgba(186, 230, 253, 0.55) !important;
+    box-shadow: 0 8px 24px -4px rgba(186, 230, 253, 0.25);
+  }
+  .theme-snow .glass:hover {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    border-color: rgba(56, 189, 248, 0.65) !important;
+  }
+  .theme-snow .text-white {
+    color: #0f172a !important;
+  }
+  .theme-snow .text-slate-200,
+  .theme-snow .text-slate-300 {
+    color: #1e293b !important;
+  }
+
   * {
     border-color: hsl(var(--border));
+  }
+  body, .bg-surface-dark {
+    transition: background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1), color 0.5s ease, border-color 0.5s ease;
   }
   body {
     background-color: hsl(var(--background));

@@ -15,6 +15,7 @@ import { ScrollProgress } from '@/components/animations/ScrollProgress'
 import { CustomCursor } from '@/components/animations/CustomCursor'
 import Education from '@/components/sections/Education'
 import { ToastContainer } from '@/components/ui/ToastNotification'
+import EnvironmentalBackdrop from '@/components/animations/EnvironmentalBackdrop'
 
 const CommandPalette = lazy(() =>
   import('@/components/animations/CommandPalette').then(mod => ({ default: mod.CommandPalette }))
@@ -39,11 +40,12 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen bg-surface-dark text-foreground overflow-x-hidden">
+      <EnvironmentalBackdrop />
       <CustomCursor />
       <ScrollProgress />
       <ToastContainer />
       <Navbar />
-      <main>
+      <main className="relative z-10">
         <Hero />
         <About />
         <Projects />
