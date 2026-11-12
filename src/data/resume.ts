@@ -515,6 +515,16 @@ export const resume: ResumeData = {
 
 export const certificates: Certificate[] = [
   {
+    id: 'to-my-portfolio-aws-certified-ai-practitioner',
+    title: 'to my portfolio: AWS Certified AI Practitioner',
+    issuer: 'Amazon Web Services with category ai',
+    date: '2026-11-12',
+    category: 'ai',
+    skills: ["Artificial Intelligence","Machine Learning","Python"],
+    description: 'Professional certification in to my portfolio: AWS Certified AI Practitioner awarded by Amazon Web Services with category ai.',
+    file: '/certificates/AWS_Certified_AI_Practitioner_2026.pdf',
+  },
+  {
     id: 'tvk-ai-internship',
     title: 'AI with Data Science Internship Completion Letter',
     issuer: 'TVK Technologies',
