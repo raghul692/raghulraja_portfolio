@@ -90,7 +90,7 @@ export interface Project {
 
 export const resume: ResumeData = {
   name: 'Raghul Raja ',
-  title: 'Full Stack Developer',
+  title: 'change my title to Senior Full Stack Engineer',
   location: 'Villupuram, Tamil Nadu, India',
   email: 'raghulraja2006@gmail.com',
   phone: '+91 8946092718',
