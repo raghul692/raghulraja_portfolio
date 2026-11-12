@@ -102,7 +102,7 @@ export const resume: ResumeData = {
   },
   summary: 'Full Stack Developer specializing in React, TypeScript, Node.js, and AI/ML. Experienced in building scalable web applications, designing intuitive user experiences, and developing intelligent systems with Python. Passionate about solving complex problems and shipping high-quality software that bridges engineering, design, and artificial intelligence.',
   skills: {
-    frontend: ['React.js', 'TypeScript', 'HTML5', 'CSS3', 'Tailwind CSS', 'Framer Motion', 'Responsive Web Design', 'Next.js'],
+    frontend: ['React.js', 'TypeScript', 'HTML5', 'CSS3', 'Tailwind CSS', 'Framer Motion', 'Responsive Web Design', 'Next.js', 'Svelte add pannu'],
     backend: ['FastAPI (Python)', 'Node.js', 'Express.js', 'REST API Architecture', 'JWT Authentication', 'Docker', 'Kubernetes', 'Golang'],
     database: ['Supabase PostgreSQL 17', 'pgvector (Vector Search)', 'Database Design', 'Connection Pooling'],
     ai: ['Python', 'Scikit-Learn', 'Pandas', 'NumPy', 'Machine Learning', 'Gemini AI API', 'Streamlit'],
@@ -629,6 +629,7 @@ export const certificates: Certificate[] = [
 ]
 
 export const techStack: TechItem[] = [
+  { name: 'Svelte add pannu', category: 'frontend' },
   { name: 'Docker', category: 'backend' },
   { name: 'Kubernetes', category: 'backend' },
   { name: 'HTML5', category: 'frontend' },
