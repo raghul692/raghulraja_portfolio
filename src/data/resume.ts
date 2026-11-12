@@ -153,41 +153,6 @@ export const resume: ResumeData = {
   ],
   projects: [
     {
-      id: 'autonomous-feature-app',
-      title: 'Autonomous Feature App',
-      description: 'Autonomous Feature App engineered with TypeScript, Python, Redis and production-grade architecture.',
-      longDescription: 'Autonomous Feature App is a modern, high-performance web application designed and built with TypeScript, Python, Redis, Docker, LangGraph. Engineered with responsive UI/UX, robust backend architecture, and seamless integrations.',
-      tech: ["TypeScript","Python","Redis","Docker","LangGraph"],
-      category: 'ai',
-      highlights: [
-        "Engineered full-stack architecture with TypeScript & Python",
-        "Integrated responsive UI design and optimized workflow execution",
-        "Production deployed with verified monitoring and live state tracking"
-],
-      github: 'https://github.com/raghul692/autonomous-agent-swarm',
-      live: 'https://raghulraja.is-a.dev/',
-      icon: 'Sparkles',
-    },
-    {
-      id: 'raghul-ai-portfolio-os-v8',
-      title: 'RAGHUL AI — Portfolio Operating System V8.0',
-      description: 'An AI-powered Portfolio Operating System featuring a 7-stage autonomous multi-agent execution pipeline, cryptographic governance using Ed25519 signatures, emergency-stop protection, immutable SHA-256 audit ledger, live GitHub and deployment integrations, SQLite WAL persistence, database recovery, monitoring, analytics, and a responsive engineering operations dashboard.',
-      longDescription: 'RAGHUL AI Portfolio Operating System V8.0 is a sovereign, production-grade autonomous management platform designed to control and maintain complete developer portfolio infrastructure. It features a 7-stage autonomous execution graph (Plan, Execute, Test, Review, Approval, Deploy, Verify), cryptographic Ed25519 single-use authorization tickets, SQLite WAL mode with online hot backup and disaster recovery, bi-directional Supabase synchronization, real-time telemetry, and automated deployment verification across Vercel and Render.',
-      tech: ["Node.js","Express.js","JavaScript","SQLite","better-sqlite3","Playwright","REST APIs","GitHub API","Vercel","Render","Ed25519","SHA-256"],
-      category: 'fullstack',
-      highlights: [
-        "14 integrated operations modules with anti-slop engineering design",
-        "7-stage autonomous AI execution pipeline with cryptographic approval gates",
-        "Ed25519 signature governance & append-only SHA-256 Merkle audit ledger",
-        "Live GitHub commit/branch integration & Vercel/Render deployment monitoring",
-        "SQLite WAL database architecture with automated hot disaster recovery",
-        "Responsive engineering dashboard passing WCAG 2.2 AA accessibility standards"
-],
-      github: 'https://github.com/raghul692/raghulraja_portfolio',
-      live: 'https://raghulraja.is-a.dev/',
-      icon: 'Bot',
-    },
-    {
       id: 'careerconnectpro',
       title: 'CareerConnectPro',
       description: 'Full-stack job portal with secure authentication, job management, and application tracking.',
