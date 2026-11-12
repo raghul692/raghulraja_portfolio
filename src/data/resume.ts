@@ -629,6 +629,8 @@ export const certificates: Certificate[] = [
 ]
 
 export const techStack: TechItem[] = [
+  { name: 'Docker', category: 'backend' },
+  { name: 'Kubernetes', category: 'backend' },
   { name: 'HTML5', category: 'frontend' },
   { name: 'CSS3', category: 'frontend' },
   { name: 'JavaScript', category: 'frontend' },
