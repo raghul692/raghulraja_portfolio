@@ -506,6 +506,16 @@ export const certificates: Certificate[] = [
     file: '/certificates/professional-achievement-certificate.pdf',
   },
   {
+    id: 'professional-achievement-certificate',
+    title: 'Professional Achievement Certificate',
+    issuer: 'Amazon Web Services',
+    date: '2026-11-12',
+    category: 'ai',
+    skills: ["Artificial Intelligence","Machine Learning","Python"],
+    description: 'Professional certification in Professional Achievement Certificate awarded by Amazon Web Services.',
+    file: '/certificates/professional-achievement-certificate.pdf',
+  },
+  {
     id: 'to-my-portfolio-aws-certified-ai-practitioner',
     title: 'to my portfolio: AWS Certified AI Practitioner',
     issuer: 'Amazon Web Services with category ai',
