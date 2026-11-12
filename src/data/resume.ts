@@ -153,6 +153,22 @@ export const resume: ResumeData = {
   ],
   projects: [
     {
+      id: 'autonomous-feature-app',
+      title: 'Autonomous Feature App',
+      description: 'Autonomous Feature App engineered with TypeScript, Python, Redis and production-grade architecture.',
+      longDescription: 'Autonomous Feature App is a modern, high-performance web application designed and built with TypeScript, Python, Redis, Docker, LangGraph. Engineered with responsive UI/UX, robust backend architecture, and seamless integrations.',
+      tech: ["TypeScript","Python","Redis","Docker","LangGraph"],
+      category: 'ai',
+      highlights: [
+        "Engineered full-stack architecture with TypeScript & Python",
+        "Integrated responsive UI design and optimized workflow execution",
+        "Production deployed with verified monitoring and live state tracking"
+],
+      github: 'https://github.com/raghul692/autonomous-agent-swarm',
+      live: 'https://raghulraja.is-a.dev/',
+      icon: 'Sparkles',
+    },
+    {
       id: 'raghul-ai-portfolio-os-v8',
       title: 'RAGHUL AI — Portfolio Operating System V8.0',
       description: 'An AI-powered Portfolio Operating System featuring a 7-stage autonomous multi-agent execution pipeline, cryptographic governance using Ed25519 signatures, emergency-stop protection, immutable SHA-256 audit ledger, live GitHub and deployment integrations, SQLite WAL persistence, database recovery, monitoring, analytics, and a responsive engineering operations dashboard.',
